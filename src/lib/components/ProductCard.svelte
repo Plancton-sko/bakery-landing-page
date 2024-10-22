@@ -3,6 +3,7 @@
     import type { Product } from "$lib/types/Product";
   
     export let product: Product; // Produto individual passado como propriedade
+    export let isHighlighted: boolean = false; 
   
     // Função utilitária opcional para formatar o preço
     const formatPrice = (price: number): string => {
@@ -13,7 +14,7 @@
     };
 </script>
   
-<div class="product-card">
+<div class="product-card {isHighlighted ? 'highlight' : ''}" >
 
   <img src={product.image} alt={product.name} />
 
@@ -42,6 +43,9 @@
       width: 100%;
       max-width: 200px;
       border-radius: 8px;
+      height: 200px;
+      object-fit: cover; 
+
     }
   
     .product-card h3 {
