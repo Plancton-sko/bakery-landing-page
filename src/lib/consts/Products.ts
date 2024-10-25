@@ -4,40 +4,40 @@ import type { Product } from "$lib/types/Product";
 export let products: Product[] = [
     {
       id: '550e8400-e29b-41d4-a716-446655440000',
-      name: 'Pão de farinha branca',
-      description: 'Pão fresco feito com farinha branca, ideal para acompanhar refeições ou fazer sanduíches.',
+      name: 'White Flour Bread',
+      description: 'Fresh bread made with white flour, ideal for accompanying meals or making sandwiches.',
       price: 4.90,
       category: Categories.BREAD,
       image: '/images/white-flour-bread.jpg'
     },
     {
       id: '550e8400-e29b-41d4-a716-446655440001',
-      name: 'Pão integral',
-      description: 'Pão saudável e saboroso, preparado com farinha integral para um toque rústico.',
+      name: 'Whole Wheat Bread',
+      description: 'Healthy and tasty bread, made with whole wheat flour for a rustic touch.',
       price: 5.90,
       category: Categories.BREAD,
       image: '/images/wholemeal-bread.jpg'
     },
     {
       id: '550e8400-e29b-41d4-a716-446655440002',
-      name: 'Pão de farinha de espelta',
-      description: 'Feito com farinha de espelta, este pão oferece um sabor leve e textura única.',
+      name: 'Spelt Flour Bread',
+      description: 'Made with spelt flour, this bread offers a light flavor and unique texture.',
       price: 6.90,
       category: Categories.BREAD,
       image: '/images/spelled-flour-bread.jpg'
     },
     {
       id: '550e8400-e29b-41d4-a716-446655440003',
-      name: 'Seleção de pães e pãezinhos',
-      description: 'Uma variedade de pães e pãezinhos frescos, ideais para reuniões e celebrações.',
+      name: 'Assorted Breads and Rolls',
+      description: 'A variety of fresh breads and rolls, ideal for gatherings and celebrations.',
       price: 8.00,
       category: Categories.BREAD,
       image: '/images/breads-rolls.jpg'
     },
     {
       id: '550e8400-e29b-41d4-a716-446655440004',
-      name: 'Expresso',
-      description: 'Café expresso clássico, perfeito para um rápido estímulo ou para acompanhar uma sobremesa.',
+      name: 'Espresso',
+      description: 'Classic espresso, perfect for a quick boost or to accompany a dessert.',
       price: 3.50,
       category: Categories.COFFEE,
       image: '/images/espresso.jpg'
@@ -45,15 +45,15 @@ export let products: Product[] = [
     {
       id: '550e8400-e29b-41d4-a716-446655440005',
       name: 'Cappuccino',
-      description: 'Café cremoso com leite vaporizado e espuma, perfeito para começar o dia.',
+      description: 'Creamy coffee with steamed milk and foam, perfect to start the day.',
       price: 4.00,
       category: Categories.COFFEE,
       image: '/images/cappuccino.jpg'
     },
     {
       id: '550e8400-e29b-41d4-a716-446655440006',
-      name: 'Cookies de gotas de chocolate',
-      description: 'Deliciosos cookies crocantes com pedaços generosos de chocolate.',
+      name: 'Chocolate Chip Cookies',
+      description: 'Delicious, crispy cookies with generous chocolate chunks.',
       price: 2.50,
       category: Categories.COOKIES,
       image: '/images/chocolate-chip-cookies.jpg'
@@ -61,15 +61,15 @@ export let products: Product[] = [
     {
       id: '550e8400-e29b-41d4-a716-446655440007',
       name: 'Macarons',
-      description: 'Macarons franceses delicados, disponíveis em diversos sabores e cores.',
+      description: 'Delicate French macarons, available in a variety of flavors and colors.',
       price: 5.00,
       category: Categories.COOKIES,
       image: '/images/macarons.jpg'
     },
     {
       id: '550e8400-e29b-41d4-a716-446655440008',
-      name: 'Bolo personalizado',
-      description: 'Bolo customizado para aniversários e celebrações especiais, decorado conforme sua preferência.',
+      name: 'Custom Cake',
+      description: 'Customized cake for birthdays and special celebrations, decorated to your preference.',
       price: 100.00,
       category: Categories.OTHERS,
       image: '/images/custom-cake.jpg'

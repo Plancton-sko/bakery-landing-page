@@ -43,7 +43,7 @@ type="button"
       <p>{product.description}</p>
       <img src={product.image} alt={product.name} />
       <p>{new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(product.price)}</p>
-      <button class="add-to-cart" on:click={() => addToCart(product)}>Adicionar ao Carrinho</button>
+      <button class="add-to-cart" on:click={() => addToCart(product)}>Add to Cart</button>
   </div>
 </Modal>
 
