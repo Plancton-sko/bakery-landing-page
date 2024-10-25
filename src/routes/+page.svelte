@@ -1,4 +1,5 @@
 <script lang="ts">
+  // Layout 
   import AboutUs from "$lib/components/AboutUs.svelte";
   import Contact from "$lib/components/Contact.svelte";
   import Hero from "$lib/components/Hero.svelte";

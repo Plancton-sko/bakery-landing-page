@@ -1,13 +1,37 @@
 <script lang="ts">
+  import { onMount } from 'svelte'; // Adicione essa linha
   import Footer from '$lib/components/Footer.svelte';
   import Header from '$lib/components/Header.svelte';
+  import Spinner from '$lib/components/Spinner.svelte';
   import '../styles/global.css';
 
   let cartCount: number = 0;
+  let loading: boolean = true;
+
+  onMount(() => {
+    setTimeout(() => {
+      loading = false; // Simule o fim do carregamento após 2 segundos
+    }, 600);
+  });
 </script>
 
 <Header {cartCount} />
 
-<slot />
+{#if loading}
+  <div class="spinner-container">
+    <Spinner />
+  </div>
+{:else}
+  <slot />
+{/if}
 
 <Footer />
+
+<style>
+  .spinner-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+  }
+</style>
