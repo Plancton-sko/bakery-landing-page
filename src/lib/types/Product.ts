@@ -1,3 +1,5 @@
+// src/lib/types/Product.ts
+
 import type { Categories } from "$lib/enums/Categories";
 import type { Writable } from "svelte/store";
 

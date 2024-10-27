@@ -1,99 +1,173 @@
-<!-- src/lib/components/ProductCard.svelte -->
+<!--src/li/components/ProductCard.svelte-->
 <script lang="ts">
-  import type { Product } from "$lib/types/Product";
-  import Modal from "$lib/components/Modal.svelte";
-    import { addToCart } from "$lib/stores/cart";
+    import type { Product } from "$lib/types/Product";
+    import Modal from "$lib/components/Modal.svelte";
+    import { addToCart, isCartOpen } from "$lib/stores/cart";
 
-  export let product: Product;
-  export let isHighlighted: boolean = false;
+    export let product: Product;
+    export let isHighlighted: boolean = false;
 
-  let isModalOpen = false;
+    let isModalOpen = false;
+    let quantity = 1; // Quantidade padrão
 
-  // Função para formatar o preço
-  const formatPrice = (price: number): string => {
-      return new Intl.NumberFormat('en-US', {
-          style: 'currency',
-          currency: 'USD',
-      }).format(price);
-  };
+    // Função para formatar o preço
+    const formatPrice = (price: number): string => {
+        return new Intl.NumberFormat('en-US', {
+            style: 'currency',
+            currency: 'USD',
+        }).format(price);
+    };
 
-  // Funções para abrir e fechar o modal
-  const openModal = () => {
-      isModalOpen = true;
-  };
+    // Funções para abrir e fechar o modal
+    const openModal = () => {
+        isModalOpen = true;
+    };
 
-  const closeModal = () => {
-      isModalOpen = false;
-  };
+    const closeModal = () => {
+        isModalOpen = false;
+    };
+
+    // Função para adicionar ao carrinho com a quantidade especificada
+    const handleAddToCart = () => {
+        addToCart(product, quantity); // Adiciona ao carrinho com a quantidade selecionada
+        isCartOpen.set(true); // Abre o carrinho automaticamente
+        closeModal(); // Fecha o modal de detalhes
+    };
 </script>
 
 <button
-class="product-card {isHighlighted ? 'highlight' : ''}"
-on:click={openModal}
-type="button"
+    class="product-card {isHighlighted ? 'highlight' : ''}"
+    on:click={openModal}
+    type="button"
 >
-  <img src={product.image} alt={product.name} />
-  <h3>{product.name}</h3>
-  <p>{formatPrice(product.price)}</p>
+    <img src={product.image} alt={product.name} />
+    <h3>{product.name}</h3>
+    <p>{formatPrice(product.price)}</p>
 </button>
 
 <Modal isOpen={isModalOpen} onClose={closeModal}>
-  <div class="modal-content">
-      <h2>{product.name}</h2>
-      <p>{product.description}</p>
-      <img src={product.image} alt={product.name} />
-      <p>{new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(product.price)}</p>
-      <button class="add-to-cart" on:click={() => addToCart(product)}>Add to Cart</button>
-  </div>
+    <div class="modal-content">
+        <h2>{product.name}</h2>
+        <p>{product.description}</p>
+        <img src={product.image} alt={product.name} class="imgModal" />
+        <p>{formatPrice(product.price)}</p>
+
+        <!-- Seletor de quantidade -->
+        <label for="quantity">Quantity:</label>
+        <input
+            type="number"
+            id="quantity"
+            bind:value={quantity}
+            min="1"
+            class="quantity-input"
+        />
+
+        <!-- Botão para adicionar ao carrinho sem fechar a janela do carrinho -->
+        <button class="add-to-cart" on:click={handleAddToCart}>Add to Cart</button>
+    </div>
 </Modal>
 
 <style>
-  .product-card {
+    /* Cartão de produto com borda leve e transições */
+    .product-card {
       display: flex;
       flex-direction: column;
       align-items: center;
       border: 1px solid #ccc;
       padding: 16px;
-      border-radius: 8px;
+      border-radius: 12px;
+      background: #fdfdfd;
       transition: box-shadow 0.3s ease;
-      cursor: pointer; /* Indicando que é interativo */
-      width: 100%; /* Ajustar conforme necessário */
-  }
-
-  .product-card:hover {
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  }
-
-  .product-card img {
+      cursor: pointer;
+      width: 100%;
+    }
+  
+    .product-card:hover {
+      box-shadow: 0px 8px 24px rgba(0, 0, 0, 0.1);
+    }
+  
+    /* Imagem do produto com estilo e sombra suave */
+    .product-card img {
       width: 100%;
       max-width: 200px;
-      border-radius: 8px;
       height: 200px;
-      object-fit: cover; 
-  }
-
-  .product-card h3 {
+      object-fit: cover;
+      border-radius: 8px;
+      box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+    }
+  
+    /* Título e descrição do produto */
+    .product-card h3 {
+      font-family: 'Arial', sans-serif;
+      font-size: 20px;
+      font-weight: bold;
+      color: #333;
       margin: 16px 0 8px;
-      font-size: 1.2rem;
       text-align: center;
-  }
-
-  .product-card p {
-      font-size: 1rem;
+    }
+  
+    .product-card p {
+      font-family: 'Roboto', sans-serif;
+      font-size: 16px;
       color: #555;
-  }
-
-  .modal-details {
+      text-align: center;
+    }
+  
+    /* Conteúdo do modal */
+    .modal-content {
       display: flex;
       flex-direction: column;
       align-items: center;
-  }
-
-  .modal-image {
-      width: 100%;
-      max-width: 400px;
+      padding: 30px;
+      border-radius: 12px;
+      font-family: 'Roboto', sans-serif;
+      background: #fff;
+      box-shadow: 0px 8px 24px rgba(0, 0, 0, 0.2);
+    }
+  
+    /* Imagem do modal com o mesmo estilo de CartModal */
+    .imgModal {
+      max-width: 500px;
+      max-height: 350px;
       border-radius: 8px;
-      object-fit: cover;
-      margin-bottom: 16px;
-  }
-</style>
+      box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+      margin-bottom: 20px;
+    }
+  
+    /* Seletor de quantidade */
+    .quantity-input {
+      margin-top: 8px;
+      padding: 8px;
+      width: 60px;
+      text-align: center;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      font-size: 16px;
+      transition: border-color 0.3s;
+    }
+  
+    .quantity-input:focus {
+      border-color: #ebb916;
+      outline: none;
+      box-shadow: 0 0 5px rgba(235, 185, 22, 0.3);
+    }
+  
+    /* Botão de adicionar ao carrinho */
+    .add-to-cart {
+      margin-top: 16px;
+      background-color: #ebb916;
+      color: white;
+      font-size: 16px;
+      padding: 12px 20px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background-color 0.3s, transform 0.2s;
+    }
+  
+    .add-to-cart:hover {
+      background-color: #d6a514;
+      transform: scale(1.05);
+    }
+  </style>
+  

@@ -1,3 +1,4 @@
+<!--src/lib/components/OurProducts.svelte-->
 <script lang="ts">
   import { onMount } from "svelte";
   import { writable, derived } from "svelte/store";

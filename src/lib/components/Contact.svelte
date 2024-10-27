@@ -69,6 +69,7 @@
     background-color: #f9f9f9;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
     border-radius: 10px;
+    font-family: 'Roboto', sans-serif;
   }
 
   #contact form {
@@ -93,6 +94,7 @@
     border-radius: 8px;
     box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
     transition: border 0.3s ease;
+    font-family: 'Roboto', sans-serif;
   }
 
   #contact input:focus,

@@ -1,8 +1,8 @@
+<!--src/lib/components/Modal.svelte-->
 <script lang="ts">
-  export let isOpen: boolean; // Indicates if the modal is open
-  export let onClose: () => void; // Function to close the modal
+  export let isOpen: boolean;
+  export let onClose: () => void;
 
-  // Detect screen size for mobile responsiveness
   let isMobile = false;
   if (typeof window !== 'undefined') {
     isMobile = window.innerWidth <= 768;
@@ -20,82 +20,99 @@
       on:click|stopPropagation
     >
       {#if isMobile}
-        <div class="drag-handle"></div> <!-- Drag handle for bottom sheet -->
+        <div class="drag-handle"></div>
       {/if}
       <slot></slot>
-      <button class="close-button" on:click={closeModal}>Close</button>
     </div>
   </div>
 {/if}
 
 <style>
-  .modal-overlay {
+   /* Overlay com o fundo escuro */
+   .modal-overlay {
     position: fixed;
     top: 0;
     left: 0;
     right: 0;
     bottom: 0;
-    background: rgba(0, 0, 0, 0.5);
+    background: rgba(0, 0, 0, 0.7); /* Fundo mais escuro */
     display: flex;
     justify-content: center;
     align-items: center;
     z-index: 1000;
+    animation: fadeIn 0.3s ease-in;
   }
 
+  /* Conteúdo do modal com estilo similar ao CartModal */
   .modal-content {
-    background: white;
-    padding: 24px;
-    border-radius: 8px;
-    max-width: 500px;
-    width: 100%;
-    transition: transform 0.3s ease;
+    background: #ffffff;
+    padding: 30px;
+    border-radius: 12px;
+    width: 90%;
+    max-width: 600px;
+    text-align: center;
+    box-shadow: 0px 8px 24px rgba(0, 0, 0, 0.2);
+    animation: slideIn 0.3s ease-in;
   }
 
+  /* Botão de fechar com o mesmo estilo do CartModal */
   .close-button {
-    margin-top: 16px;
-    background: #007bff;
+    background-color: #ec3737;
     color: white;
-    padding: 8px 16px;
+    padding: 10px 20px;
     border: none;
-    border-radius: 4px;
+    border-radius: 6px;
+    font-weight: bold;
     cursor: pointer;
+    transition: background-color 0.3s, transform 0.2s;
   }
 
   .close-button:hover {
-    background: #0056b3;
+    background-color: #d32f2f;
+    transform: scale(1.05);
   }
 
-  /* Bottom Sheet for mobile view */
+  /* Estilo de bottom-sheet para mobile */
   .bottom-sheet {
     position: fixed;
     bottom: 0;
     left: 0;
     right: 0;
     max-width: 100%;
-    height: 40%;
+    height: 50%;
     border-top-left-radius: 16px;
     border-top-right-radius: 16px;
-    padding: 16px;
-    transition: transform 0.3s ease;
+    padding: 24px;
+    background: #ffffff;
+    box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.15);
   }
 
   .drag-handle {
-    width: 40px;
+    width: 50px;
     height: 5px;
-    background-color: #ccc;
+    background-color: #beb7b7;
     border-radius: 3px;
-    margin: 0 auto 16px auto;
+    margin: 0 auto 12px auto;
   }
 
-  @media (max-width: 768px) {
-    .modal-content {
-      max-width: 100%;
-      height: 100%;
-      border-radius: 0;
+  /* Animações de fade e slide */
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
     }
+    to {
+      opacity: 1;
+    }
+  }
 
-    .bottom-sheet {
-      height: 50%;
+  @keyframes slideIn {
+    from {
+      transform: translateY(-20px);
+      opacity: 0;
+    }
+    to {
+      transform: translateY(0);
+      opacity: 1;
     }
   }
 </style>
