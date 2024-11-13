@@ -1,5 +1,11 @@
-import type { Product } from "$lib/types/Product";
+// src/lib/types/Highlight.ts
+import type { Product } from './Product';
 
-export type Highlight = Product & {
-    isActive: boolean; // Propriedade que indica se o destaque está ativo
-};
+export interface Highlight extends Partial<Product> {
+  id: string;
+  name: string;
+  price: number;
+  image?: string;
+  description?: string; 
+  isActive?: boolean;
+}

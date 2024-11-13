@@ -1,5 +1,5 @@
 // src/lib/stores/cart.ts
-import { writable } from 'svelte/store';
+import { derived, writable } from 'svelte/store';
 import type { Product } from '$lib/types/Product';
 
 interface CartItem {
@@ -12,8 +12,13 @@ export const isCartOpen = writable(false);
 
 export const cart = writable<CartItem[]>([]);
 
-export const addToCart = (product: Product, quantity: number = 1) => {
-  cart.update(items => {
+export const totalPrice = derived(
+  cart, 
+  ($cart: CartItem[]) => $cart.reduce((total: number, item: CartItem) => total + item.product.price * item.quantity, 0)
+);
+
+export const addToCart = (product: Product, quantity: number = 1): void => {
+  cart.update((items: CartItem[]): CartItem[] => {
     const existingItem = items.find(item => item.product.id === product.id);
     if (existingItem) {
       // Aumentar a quantidade com a quantidade especificada se o produto já estiver no carrinho
@@ -29,22 +34,24 @@ export const addToCart = (product: Product, quantity: number = 1) => {
   });
 };
 
-export const removeFromCart = (productId: string) => {
-  cart.update(items => items.filter(item => item.product.id !== productId));
-};
-
-export const increaseQuantity = (productId: string) => {
-  cart.update(items => 
-    items.map(item =>
-      item.product.id === productId
-        ? { ...item, quantity: item.quantity + 1 }
-        : item
-    )
+export const removeFromCart = (productId: string): void => {
+  cart.update((items: CartItem[]): CartItem[] => 
+    items.filter(item => item.product.id !== productId)
   );
 };
 
-export const decreaseQuantity = (productId: string) => {
-  cart.update(items => {
+export const increaseQuantity = (productId: string): void => {
+  cart.update((items: CartItem[]): CartItem[] => {
+    return items.map(item =>
+      item.product.id === productId
+        ? { ...item, quantity: item.quantity + 1 }
+        : item
+    );
+  });
+};
+
+export const decreaseQuantity = (productId: string): void => {
+  cart.update((items: CartItem[]): CartItem[] => {
     const existingItem = items.find(item => item.product.id === productId);
     if (existingItem && existingItem.quantity > 1) {
       // Reduzir quantidade se maior que 1
@@ -59,6 +66,7 @@ export const decreaseQuantity = (productId: string) => {
   });
 };
 
-export const clearCart = () => {
+export const clearCart = (): void => {
   cart.set([]);
 };
+

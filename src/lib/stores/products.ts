@@ -1,3 +1,4 @@
+// src/lib/stores/products
 import { writable, type Writable } from 'svelte/store';
 import type { Product, ProductStore } from '$lib/types/Product';
 

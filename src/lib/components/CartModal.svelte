@@ -1,6 +1,6 @@
 <!-- src/lib/components/CartModal.svelte -->
 <script lang="ts">
-  import { cart, clearCart, removeFromCart, increaseQuantity, decreaseQuantity } from "$lib/stores/cart";
+  import { cart, clearCart, removeFromCart, increaseQuantity, decreaseQuantity, totalPrice } from "$lib/stores/cart";
   import { get } from 'svelte/store';
 
   export let closeCartModal: () => void;
@@ -13,11 +13,6 @@
   let userName = "";
   let userAddress = "";
   let userEmail = "";
-
-  // Função para calcular o preço total
-  const totalPrice = () => {
-    return cartItems.reduce((total, item) => total + item.product.price * item.quantity, 0);
-  };
 
   // Atualize `cartItems` sempre que o carrinho mudar
   cart.subscribe(items => {
@@ -55,7 +50,7 @@
   const message = `Olá, meu nome é ${userName}.
   Eu gostaria de finalizar a compra dos seguintes produtos:
   ${productList}
-  Total: ${new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(totalPrice())}
+  Total: ${new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format($totalPrice)}
   Meu endereço: ${userAddress}
   Meu email: ${userEmail}`;
 
@@ -108,7 +103,7 @@
       {/if}
     </ul>
 
-    <p>Total: {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(totalPrice())}</p>
+    <p>Total: {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format($totalPrice)}</p>
 
     {#if !showUserForm && cartItems.length > 0}
       <button class="checkout-btn" on:click={displayForm}>Checkout</button>
@@ -240,14 +235,6 @@
 
   .remove-btn:hover {
     background-color: #cc2f2f;
-  }
-
-  .total-section {
-    font-family: 'Roboto', sans-serif;
-    font-size: 18px;
-    font-weight: bold;
-    margin: 20px 0;
-    color: #444;
   }
 
   .checkout-btn, .close-btn {

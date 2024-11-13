@@ -1,3 +1,4 @@
+// src/lib/const/Highlights.ts
 import { Categories } from "$lib/enums/Categories";
 import type { Highlight } from "$lib/types/Highlight";
 
@@ -7,7 +8,7 @@ export const highlights: Highlight[] = [
         name: 'White flour bread',
         price: 2490,
         category: Categories.BREAD,
-        image: '/images/white-flour-bread.jpg',
+        image: '/images/white-flour-bread.webp',
         isActive: true
     },
     {
@@ -15,7 +16,7 @@ export const highlights: Highlight[] = [
         name: 'Wholemeal bread',
         price: 3590,
         category: Categories.BREAD,
-        image: '/images/wholemeal-bread.jpg',
+        image: '/images/wholemeal-bread.webp',
         isActive: false
     }
 ];

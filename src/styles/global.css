@@ -6,4 +6,5 @@
     --bg-light: #f8f8f8;
     --bg-dark: #2b16e6;
     --font-family: 'Arial', sans-serif;
+    --breakpoint-mobile: 768px;
   }

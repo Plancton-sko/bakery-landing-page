@@ -1,3 +1,5 @@
+<!--/src/lib/componnets/AboutUs-->
+<body>
 <section id="about-us">
   <h2>About Us</h2>
   <p>
@@ -5,7 +7,7 @@
   </p>
   <div class="about-content">
     <div class="image-container">
-      <img src="#" alt="Bread Image" />
+      <img src="/images/nadya-spetnitskaya.jpg" alt="Bread Image" />
     </div>
     <div class="text-container">
       <h3>What is your favorite bread for your sandwich</h3>
@@ -17,7 +19,7 @@
     </div>
   </div>
 </section>
-
+</body>
 <style>
 /* Estilo geral */
 body {

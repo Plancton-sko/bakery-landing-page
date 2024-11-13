@@ -2,7 +2,7 @@
   // Layout 
   import AboutUs from "$lib/components/AboutUs.svelte";
   import Contact from "$lib/components/Contact.svelte";
-  import Hero from "$lib/components/Hero.svelte";
+  import Hero from "$lib/components/HeroSlider.svelte";
   import HotDeals from "$lib/components/HotDeals.svelte";
   import OurProducts from "$lib/components/OurProducts.svelte";
   import { products } from "$lib/consts/Products";

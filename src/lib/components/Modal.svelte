@@ -55,23 +55,6 @@
     animation: slideIn 0.3s ease-in;
   }
 
-  /* Botão de fechar com o mesmo estilo do CartModal */
-  .close-button {
-    background-color: #ec3737;
-    color: white;
-    padding: 10px 20px;
-    border: none;
-    border-radius: 6px;
-    font-weight: bold;
-    cursor: pointer;
-    transition: background-color 0.3s, transform 0.2s;
-  }
-
-  .close-button:hover {
-    background-color: #d32f2f;
-    transform: scale(1.05);
-  }
-
   /* Estilo de bottom-sheet para mobile */
   .bottom-sheet {
     position: fixed;

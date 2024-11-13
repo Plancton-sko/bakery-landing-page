@@ -1,71 +1,95 @@
 <!--src/li/components/ProductCard.svelte-->
 <script lang="ts">
-    import type { Product } from "$lib/types/Product";
-    import Modal from "$lib/components/Modal.svelte";
-    import { addToCart, isCartOpen } from "$lib/stores/cart";
+  import { onMount } from 'svelte'; // Add this line to import onMount
+  import type { Product } from "$lib/types/Product";
+  import Modal from "$lib/components/Modal.svelte";
+  import BottomSheet from "$lib/components/BottomSheet.svelte";
+  import { addToCart, isCartOpen } from "$lib/stores/cart";
+  import { formatPrice } from "$lib/utils/format";
 
-    export let product: Product;
-    export let isHighlighted: boolean = false;
+  export let product: Product;
+  export let isHighlighted: boolean = false;
 
-    let isModalOpen = false;
-    let quantity = 1; // Quantidade padrão
+  let isModalOpen = false;
+  let quantity = 1;
+  let isMobile = false;
 
-    // Função para formatar o preço
-    const formatPrice = (price: number): string => {
-        return new Intl.NumberFormat('en-US', {
-            style: 'currency',
-            currency: 'USD',
-        }).format(price);
-    };
+  // Check if screen is mobile on mount
+  onMount(() => {
+      isMobile = window.innerWidth <= 768;
+      window.addEventListener('resize', () => {
+          isMobile = window.innerWidth <= 768;
+      });
+  });
 
-    // Funções para abrir e fechar o modal
-    const openModal = () => {
-        isModalOpen = true;
-    };
+  const openModal = () => {
+      isModalOpen = true;
+  };
 
-    const closeModal = () => {
-        isModalOpen = false;
-    };
+  const closeModal = () => {
+      isModalOpen = false;
+  };
 
-    // Função para adicionar ao carrinho com a quantidade especificada
-    const handleAddToCart = () => {
-        addToCart(product, quantity); // Adiciona ao carrinho com a quantidade selecionada
-        isCartOpen.set(true); // Abre o carrinho automaticamente
-        closeModal(); // Fecha o modal de detalhes
-    };
+  const handleAddToCart = () => {
+      addToCart(product, quantity);
+      isCartOpen.set(true);
+      closeModal();
+  };
 </script>
 
 <button
-    class="product-card {isHighlighted ? 'highlight' : ''}"
-    on:click={openModal}
-    type="button"
+  class="product-card {isHighlighted ? 'highlight' : ''}"
+  on:click={openModal}
+  type="button"
 >
-    <img src={product.image} alt={product.name} />
-    <h3>{product.name}</h3>
-    <p>{formatPrice(product.price)}</p>
+  <img src={product.image} alt={product.name} />
+  <h3>{product.name}</h3>
+  <p>{formatPrice(product.price)}</p>
 </button>
 
-<Modal isOpen={isModalOpen} onClose={closeModal}>
-    <div class="modal-content">
-        <h2>{product.name}</h2>
-        <p>{product.description}</p>
-        <img src={product.image} alt={product.name} class="imgModal" />
-        <p>{formatPrice(product.price)}</p>
+<!-- Conditional rendering for Modal on desktop and BottomSheet on mobile -->
+{#if isMobile}
+  <BottomSheet isOpen={isModalOpen} onClose={closeModal}>
+      <div class="modal-content">
+          <h2>{product.name}</h2>
+          <p>{product.description}</p>
+          <img src={product.image} alt={product.name} class="imgModal" />
+          <p>{formatPrice(product.price)}</p>
 
-        <!-- Seletor de quantidade -->
-        <label for="quantity">Quantity:</label>
-        <input
-            type="number"
-            id="quantity"
-            bind:value={quantity}
-            min="1"
-            class="quantity-input"
-        />
+          <label for="quantity">Quantity:</label>
+          <input
+              type="number"
+              id="quantity"
+              bind:value={quantity}
+              min="1"
+              class="quantity-input"
+          />
 
-        <!-- Botão para adicionar ao carrinho sem fechar a janela do carrinho -->
-        <button class="add-to-cart" on:click={handleAddToCart}>Add to Cart</button>
-    </div>
-</Modal>
+          <button class="add-to-cart" on:click={handleAddToCart}>Add to Cart</button>
+      </div>
+  </BottomSheet>
+{:else}
+  <Modal isOpen={isModalOpen} onClose={closeModal}>
+      <div class="modal-content">
+          <h2>{product.name}</h2>
+          <p>{product.description}</p>
+          <img src={product.image} alt={product.name} class="imgModal" />
+          <p>{formatPrice(product.price)}</p>
+
+          <label for="quantity">Quantity:</label>
+          <input
+              type="number"
+              id="quantity"
+              bind:value={quantity}
+              min="1"
+              class="quantity-input"
+          />
+
+          <button class="add-to-cart" on:click={handleAddToCart}>Add to Cart</button>
+      </div>
+  </Modal>
+{/if}
+
 
 <style>
     /* Cartão de produto com borda leve e transições */

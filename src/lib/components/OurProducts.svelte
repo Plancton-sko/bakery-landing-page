@@ -55,91 +55,67 @@
   /* Estilo da seção de produtos */
   #our-products {
     text-align: center;
-    padding: 20px;
+    padding: 40px 20px;
+    background-color: #fdfdfd;
   }
 
   #our-products h2 {
     font-size: 2.5rem;
     font-weight: bold;
     color: #333;
-    margin-bottom: 20px;
-  }
-
-  /* Estilo da barra de navegação de categorias */
-  .category-nav {
-    display: flex;
-    justify-content: center;
-    margin-bottom: 20px;
-  }
-
-  .category-nav a {
-    margin: 0 10px;
-    font-size: 1rem;
-    color: #555;
-    text-decoration: none;
-    cursor: pointer;
-  }
-
-  .category-nav a.active {
-    font-weight: bold;
-    color: #000;
-    border-bottom: 2px solid #000;
+    margin-bottom: 30px;
   }
 
   /* Estilo da grade de produtos */
   .product-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 16px;
+    gap: 24px;
     margin-top: 32px;
   }
 
-  /* Estilo de cada cartão de produto */
-  .product-card {
-    background-color: #f9f9f9;
-    border: 1px solid #ddd;
-    border-radius: 10px;
-    padding: 20px;
-    text-align: center;
-    transition: transform 0.3s ease;
+  /* Definindo diferentes breakpoints */
+  @media (min-width: 576px) {
+    .product-grid {
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    }
   }
 
-  .product-card:hover {
-    transform: scale(1.05);
+  @media (min-width: 768px) {
+    .product-grid {
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 32px;
+    }
+
+    #our-products {
+      padding: 60px 40px;
+    }
   }
 
-  /* Estilo da imagem do produto */
-  .product-card img {
-    max-width: 100%;
-    height: auto;
-    border-bottom: 1px solid #ddd;
-    margin-bottom: 15px;
+  @media (min-width: 1024px) {
+    .product-grid {
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    }
+
+    #our-products h2 {
+      font-size: 3rem;
+    }
   }
 
-  /* Estilo do título do produto */
-  .product-card h3 {
-    font-size: 1.25rem;
-    margin-bottom: 10px;
-    color: #333;
-  }
 
-  /* Estilo do preço */
-  .product-card p.price {
-    font-size: 1.2rem;
-    color: #555;
-    margin-bottom: 10px;
-  }
 
-  /* Estilo das estrelas de avaliação */
-  .product-card .stars {
-    color: #f5c518;
-    margin-bottom: 10px;
-  }
-
-  /* Estilo para responsividade */
-  @media (max-width: 768px) {
+  /* Melhorias de responsividade geral */
+  @media (max-width: 576px) {
     .product-grid {
       grid-template-columns: 1fr;
+      gap: 16px;
+    }
+
+    .product-card {
+      padding: 16px;
+    }
+
+    #our-products h2 {
+      font-size: 2rem;
     }
   }
 </style>

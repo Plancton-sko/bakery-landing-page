@@ -27,10 +27,10 @@
   <nav>
     <ul>
       <li><a href="/">Home</a></li>
-      <li><a href="#">Shop</a></li>
-      <li><a href="#">About</a></li>
+      <li><a href="#our-products">Shop</a></li>
+      <li><a href="#about-us">About</a></li>
       <li><a href="#">Blog</a></li>
-      <li><a href="#">Contact</a></li>
+      <li><a href="#contact">Contact</a></li>
     </ul>
   </nav>
   <div class="cart" on:click={openCartModal}>
