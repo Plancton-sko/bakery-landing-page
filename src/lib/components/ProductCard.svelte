@@ -50,10 +50,10 @@
 <!-- Conditional rendering for Modal on desktop and BottomSheet on mobile -->
 {#if isMobile}
   <BottomSheet isOpen={isModalOpen} onClose={closeModal}>
-      <div class="modal-content">
+      <div class="bottomSheet-content">
           <h2>{product.name}</h2>
           <p>{product.description}</p>
-          <img src={product.image} alt={product.name} class="imgModal" />
+          <img src={product.image} alt={product.name} class="imgBottomSheet" />
           <p>{formatPrice(product.price)}</p>
 
           <label for="quantity">Quantity:</label>
@@ -92,7 +92,7 @@
 
 
 <style>
-     .product-card {
+    .product-card {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -142,8 +142,24 @@
     padding: 24px;
     border-radius: 12px;
     font-family: 'Roboto', sans-serif;
-    background: #fff;
-    box-shadow: 0px 8px 24px rgba(0, 0, 0, 0.2);
+  }
+
+  .bottomSheet-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 15px;
+    border-radius: 12px;
+    font-family: 'Roboto', sans-serif;
+  }
+  
+
+  .imgBottomSheet {
+    max-width: 500px;
+    max-height: 350px;
+    border-radius: 8px;
+    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
   }
 
   .imgModal {

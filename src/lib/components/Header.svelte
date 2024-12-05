@@ -145,7 +145,6 @@
   }
 
   svg {
-    fill: currentColor;
     width: 20px;
     height: 20px;
   }

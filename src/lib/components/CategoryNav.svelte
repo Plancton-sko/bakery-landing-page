@@ -1,58 +1,66 @@
-<!--
-  src/lib/componentes/CategoryNav.svelte
--->
-
 <script lang="ts">
-  import { createEventDispatcher } from 'svelte';
-  import { Categories } from '$lib/enums/Categories';
+  import { createEventDispatcher } from "svelte";
+  import { Categories } from "$lib/enums/Categories";
 
   export let categories: Categories[];
   const dispatch = createEventDispatcher();
 
+  let activeCategory: Categories = Categories.ALL;
+
   function selectCategory(category: Categories) {
-    dispatch('select', category);
+    activeCategory = category;
+    dispatch("select", category);
   }
 </script>
 
 <nav class="product-nav">
   {#each categories as category}
-    <button on:click={() => selectCategory(category)}>
+    <button
+      class:selected={category === activeCategory}
+      on:click={() => selectCategory(category)}
+    >
       {category}
     </button>
   {/each}
 </nav>
 
 <style>
+  /* Layout Principal */
   .product-nav {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      margin-bottom: 20px;
-      gap: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+    flex-wrap: wrap; /* Quebra de linha para listas longas */
+    margin-bottom: 20px;
+    overflow-x: auto; /* Scroll horizontal em dispositivos menores */
+    padding: 0 10px;
   }
 
   .product-nav button {
-      background-color: transparent;
-      border: none;
-      font-size: 1.05rem;
-      color: #555;
-      cursor: pointer;
-      padding: 10px 15px;
-      transition: color 0.3s ease, border-bottom 0.3s ease;
-      border-bottom: 2px solid transparent;
+    background-color: transparent;
+    border: none;
+    font-size: 1.1rem;
+    color: #555;
+    cursor: pointer;
+    padding: 10px 15px;
+    transition: color 0.3s ease, border-bottom 0.3s ease;
+    border-bottom: 2px solid transparent;
+    position: relative;
+    white-space: nowrap; /* Evita quebra de texto */
   }
 
   .product-nav button.selected {
-      color: #000;
-      font-weight: bold;
-      border-bottom: 2px solid #000;
+    color: #6b4226; /* Destaque para a categoria ativa */
+    font-weight: bold;
+    border-bottom: 2px solid #f5c518; /* Linha de destaque */
   }
 
   .product-nav button:hover {
-      color: #f5c518;
+    color: #f5c518;
   }
+
   .product-nav button::after {
-  
     content: "";
     display: block;
     width: 0;
@@ -60,22 +68,60 @@
     background: #f5c518;
     transition: width 0.3s;
     margin-top: 5px;
+    position: absolute;
+    bottom: 0;
+    left: 0;
   }
+
   .product-nav button:hover::after {
     width: 100%;
-    align-items: center;
   }
+
+  /* Estilos Responsivos */
   @media (max-width: 768px) {
-      .product-nav {
-          flex-direction: column;
-          gap: 10px;
-      }
+    .product-nav {
+      gap: 10px;
+      justify-content: flex-start; /* Alinhamento à esquerda em telas menores */
+      overflow-x: scroll; /* Scroll horizontal */
+    }
 
-      .product-nav button {
-          padding: 8px 10px;
-          font-size: 0.9rem;
-      }
+    .product-nav::-webkit-scrollbar {
+      height: 6px;
+    }
+
+    .product-nav::-webkit-scrollbar-thumb {
+      background-color: #ccc;
+      border-radius: 10px;
+    }
+
+    .product-nav::-webkit-scrollbar-track {
+      background-color: transparent;
+    }
+
+    .product-nav button {
+      font-size: 0.95rem;
+      padding: 8px 12px;
+    }
   }
 
+  @media (max-width: 576px) {
+    .product-nav {
+      gap: 8px;
+    }
 
+    .product-nav button {
+      font-size: 0.9rem;
+      padding: 6px 10px;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .product-nav {
+      gap: 25px;
+    }
+
+    .product-nav button {
+      font-size: 1.2rem;
+    }
+  }
 </style>
