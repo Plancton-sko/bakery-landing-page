@@ -92,106 +92,100 @@
 
 
 <style>
-    /* Cartão de produto com borda leve e transições */
-    .product-card {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      border: 1px solid #ccc;
-      padding: 16px;
-      border-radius: 12px;
-      background: #fdfdfd;
-      transition: box-shadow 0.3s ease;
-      cursor: pointer;
-      width: 100%;
-    }
-  
-    .product-card:hover {
-      box-shadow: 0px 8px 24px rgba(0, 0, 0, 0.1);
-    }
-  
-    /* Imagem do produto com estilo e sombra suave */
-    .product-card img {
-      width: 100%;
-      max-width: 200px;
-      height: 200px;
-      object-fit: cover;
-      border-radius: 8px;
-      box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
-    }
-  
-    /* Título e descrição do produto */
-    .product-card h3 {
-      font-family: 'Arial', sans-serif;
-      font-size: 20px;
-      font-weight: bold;
-      color: #333;
-      margin: 16px 0 8px;
-      text-align: center;
-    }
-  
-    .product-card p {
-      font-family: 'Roboto', sans-serif;
-      font-size: 16px;
-      color: #555;
-      text-align: center;
-    }
-  
-    /* Conteúdo do modal */
-    .modal-content {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      padding: 30px;
-      border-radius: 12px;
-      font-family: 'Roboto', sans-serif;
-      background: #fff;
-      box-shadow: 0px 8px 24px rgba(0, 0, 0, 0.2);
-    }
-  
-    /* Imagem do modal com o mesmo estilo de CartModal */
-    .imgModal {
-      max-width: 500px;
-      max-height: 350px;
-      border-radius: 8px;
-      box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
-      margin-bottom: 20px;
-    }
-  
-    /* Seletor de quantidade */
-    .quantity-input {
-      margin-top: 8px;
-      padding: 8px;
-      width: 60px;
-      text-align: center;
-      border-radius: 8px;
-      border: 1px solid #ccc;
-      font-size: 16px;
-      transition: border-color 0.3s;
-    }
-  
-    .quantity-input:focus {
-      border-color: #ebb916;
-      outline: none;
-      box-shadow: 0 0 5px rgba(235, 185, 22, 0.3);
-    }
-  
-    /* Botão de adicionar ao carrinho */
-    .add-to-cart {
-      margin-top: 16px;
-      background-color: #ebb916;
-      color: white;
-      font-size: 16px;
-      padding: 12px 20px;
-      border: none;
-      border-radius: 6px;
-      cursor: pointer;
-      transition: background-color 0.3s, transform 0.2s;
-    }
-  
-    .add-to-cart:hover {
-      background-color: #d6a514;
-      transform: scale(1.05);
-    }
+     .product-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    border: 1px solid #ccc;
+    padding: 16px;
+    border-radius: 12px;
+    background: #fdfdfd;
+    transition: box-shadow 0.3s ease, transform 0.2s ease;
+    cursor: pointer;
+    width: 100%;
+  }
+
+  .product-card:hover {
+    box-shadow: 0px 8px 24px rgba(0, 0, 0, 0.1);
+    transform: translateY(-3px);
+  }
+
+  .product-card img {
+    width: 100%;
+    max-width: 240px;
+    height: 240px;
+    object-fit: cover;
+    border-radius: 8px;
+    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+  }
+
+  .product-card h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 20px;
+    font-weight: bold;
+    color: #6b4226;
+    margin: 16px 0 8px;
+    text-align: center;
+  }
+
+  .product-card p {
+    font-family: 'Roboto', sans-serif;
+    font-size: 16px;
+    color: #555;
+    text-align: center;
+  }
+
+  .modal-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 24px;
+    border-radius: 12px;
+    font-family: 'Roboto', sans-serif;
+    background: #fff;
+    box-shadow: 0px 8px 24px rgba(0, 0, 0, 0.2);
+  }
+
+  .imgModal {
+    max-width: 500px;
+    max-height: 350px;
+    border-radius: 8px;
+    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+  }
+
+  .quantity-input {
+    margin-top: 8px;
+    padding: 8px;
+    width: 60px;
+    text-align: center;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    font-size: 16px;
+    transition: border-color 0.3s;
+  }
+
+  .quantity-input:focus {
+    border-color: #ebb916;
+    outline: none;
+    box-shadow: 0 0 5px rgba(235, 185, 22, 0.3);
+  }
+
+  .add-to-cart {
+    margin-top: 16px;
+    background-color: #ebb916;
+    color: white;
+    font-size: 16px;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.2s;
+  }
+
+  .add-to-cart:hover {
+    background-color: #d6a514;
+    transform: scale(1.05);
+  }
   </style>
   

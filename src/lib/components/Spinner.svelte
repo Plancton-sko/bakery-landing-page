@@ -1,4 +1,4 @@
-  
+<!--src/lib/components/spinner.svelte-->
     <span class="loader"></span>
   
   <style>

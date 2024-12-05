@@ -34,7 +34,7 @@
   .product-nav button {
       background-color: transparent;
       border: none;
-      font-size: 1rem;
+      font-size: 1.05rem;
       color: #555;
       cursor: pointer;
       padding: 10px 15px;
@@ -49,10 +49,22 @@
   }
 
   .product-nav button:hover {
-      color: #000;
-      border-bottom: 2px solid #000;
+      color: #f5c518;
   }
-
+  .product-nav button::after {
+  
+    content: "";
+    display: block;
+    width: 0;
+    height: 2px;
+    background: #f5c518;
+    transition: width 0.3s;
+    margin-top: 5px;
+  }
+  .product-nav button:hover::after {
+    width: 100%;
+    align-items: center;
+  }
   @media (max-width: 768px) {
       .product-nav {
           flex-direction: column;

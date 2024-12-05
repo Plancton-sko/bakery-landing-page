@@ -1,3 +1,4 @@
+<!--src/lib/components/Contact.svelte-->
 <script lang="ts">
   import { contacts } from "$lib/stores/contacts";
   import { v4 as uuidv4 } from "uuid"; // Para gerar IDs únicos
@@ -61,14 +62,15 @@
     <button type="submit">Enviar</button>
   </form>
 </section>
+
 <style>
   #contact {
     max-width: 600px;
-    margin: 0 auto;
-    padding: 50px 20px;
-    background-color: #f9f9f9;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-    border-radius: 10px;
+    margin: 20px auto;
+    padding: 40px 20px ;
+    background-color: #fffaf3; /* Fundo neutro */
+    box-shadow: 0px 8px 24px rgba(0, 0, 0, 0.1);
+    border-radius: 12px;
     font-family: 'Roboto', sans-serif;
   }
 
@@ -76,31 +78,32 @@
     display: flex;
     flex-direction: column;
     gap: 20px;
+    padding: 15px;
   }
 
   #contact label {
-    font-size: 1.2rem;
+    font-size: 1.1rem;
     font-weight: bold;
-    color: #333;
-    margin-bottom: 5px;
+    color: #333; /* Texto escuro */
+    margin-bottom: 8px;
   }
 
   #contact input,
   #contact textarea {
-    width: 100%;
+    width: 95%;
     padding: 12px;
     font-size: 1rem;
-    border: 1px solid #ccc;
+    border: 2px solid #eaeaea; /* Cinza claro */
     border-radius: 8px;
-    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
-    transition: border 0.3s ease;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
     font-family: 'Roboto', sans-serif;
   }
 
   #contact input:focus,
   #contact textarea:focus {
-    border-color: #eab308; /* Dourado */
+    border-color: #ebb916; /* Dourado */
     outline: none;
+    box-shadow: 0 0 8px rgba(235, 185, 22, 0.3); /* Glow dourado */
   }
 
   #contact textarea {
@@ -108,18 +111,40 @@
   }
 
   #contact button {
-    background-color: #eab308; /* Dourado */
-    color: #fff;
+    background-color: #ebb916; /* Dourado */
+    color: white;
     border: none;
-    padding: 15px;
+    padding: 14px;
     font-size: 1.1rem;
     font-weight: bold;
     border-radius: 8px;
     cursor: pointer;
-    transition: background-color 0.3s ease;
+    transition: background-color 0.3s ease, transform 0.2s ease;
   }
 
   #contact button:hover {
-    background-color: #cc9407; /* Dourado mais escuro ao passar o mouse */
+    background-color: #d6a514; /* Dourado mais escuro */
+    transform: scale(1.05);
+  }
+
+  /* Responsividade */
+  @media (max-width: 768px) {
+    #contact {
+      padding: 20px 15px;
+    }
+
+    #contact label {
+      font-size: 1rem;
+    }
+
+    #contact input,
+    #contact textarea {
+      font-size: 0.95rem;
+    }
+
+    #contact button {
+      font-size: 1rem;
+      padding: 12px;
+    }
   }
 </style>

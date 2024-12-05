@@ -140,7 +140,7 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background: rgba(0, 0, 0, 0.7); /* Fundo mais escuro para destacar o modal */
+    background: rgba(0, 0, 0, 0.5); /* Fundo semi-transparente */
     display: flex;
     justify-content: center;
     align-items: center;
@@ -149,7 +149,7 @@
   }
 
   .modal-content {
-    background: #fff;
+    background: #FDF4E3; /* Cor de fundo do AboutUs */
     padding: 30px;
     border-radius: 12px;
     width: 90%;
@@ -157,15 +157,14 @@
     text-align: center;
     box-shadow: 0px 8px 24px rgba(0, 0, 0, 0.2);
     animation: slideIn 0.3s ease-in;
-    overflow: hidden;
   }
 
   h2 {
-    font-family: 'Arial', sans-serif;
+    font-family: 'Playfair Display', serif;
     font-size: 26px;
     font-weight: bold;
     margin-bottom: 25px;
-    color: #333;
+    color: #493121; /* Título em marrom */
   }
 
   ul {
@@ -180,7 +179,7 @@
     font-family: 'Roboto', sans-serif;
     font-size: 16px;
     padding: 15px 10px;
-    border-bottom: 1px solid #eaeaea;
+    border-bottom: 1px solid #EAD9C3; /* Sutil separação */
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -188,21 +187,21 @@
   }
 
   ul li:hover {
-    background-color: #fbf3e6;
+    background-color: #FDF4E3; /* Realce ao passar o mouse */
   }
 
   .item-name {
     flex: 1;
     text-align: left;
     font-weight: 500;
-    color: #555;
+    color: #6B4226;
   }
 
   .item-price {
     flex: 1;
     text-align: center;
     font-size: 15px;
-    color: #888;
+    color: #6B4226;
   }
 
   .item-actions {
@@ -213,8 +212,8 @@
   }
 
   .quantity-btn, .remove-btn {
-    background-color: #e2cf96;
-    color: #333;
+    background-color: #F4A261; /* Cor de destaque */
+    color: #fff;
     border: none;
     border-radius: 5px;
     padding: 5px 12px;
@@ -224,22 +223,28 @@
   }
 
   .quantity-btn:hover {
-    background-color: #d1b775;
+    background-color: #E76F51; /* Cor mais intensa */
   }
 
   .remove-btn {
-    background-color: #ec3737;
+    background-color: #E63946; /* Botão de remover */
     color: #fff;
     padding: 6px;
   }
 
   .remove-btn:hover {
-    background-color: #cc2f2f;
+    background-color: #d84242;
+  }
+  .close-btn{
+    background-color: #d84242;
+  }
+
+  .checkout-btn{
+    background-color: #f58e2d;
   }
 
   .checkout-btn, .close-btn {
-    background-color: #ebb916;
-    color: white;
+    color: #fff;
     font-size: 16px;
     padding: 12px 20px;
     border: none;
@@ -248,18 +253,8 @@
     transition: background-color 0.3s, transform 0.2s;
   }
 
-  .checkout-btn:hover {
-    background-color: #d6a514;
-    transform: scale(1.05);
-  }
-
-  .close-btn {
-    background-color: #6c757d;
-    margin-top: 15px;
-  }
-
-  .close-btn:hover {
-    background-color: #5b626a;
+  .checkout-btn:hover, .close-btn:hover {
+    background-color: #E76F51;
     transform: scale(1.05);
   }
 
@@ -279,26 +274,25 @@
   label {
     font-weight: bold;
     font-size: 15px;
-    color: #555;
+    color: #6B4226;
     margin-bottom: 5px;
   }
 
   input {
     width: 100%;
     padding: 12px;
-    border: 1px solid #ccc;
+    border: 1px solid #EAD9C3;
     border-radius: 8px;
     font-size: 15px;
     transition: border-color 0.3s, box-shadow 0.3s;
   }
 
   input:focus {
-    border-color: #ebb916;
+    border-color: #F4A261;
     outline: none;
-    box-shadow: 0 0 5px rgba(235, 185, 22, 0.3);
+    box-shadow: 0 0 5px rgba(244, 162, 97, 0.3);
   }
 
-  /* Animações */
   @keyframes fadeIn {
     from {
       opacity: 0;

@@ -52,70 +52,70 @@
 </section>
 
 <style>
-  /* Estilo da seção de produtos */
+  /* Section Styles */
   #our-products {
     text-align: center;
-    padding: 40px 20px;
-    background-color: #fdfdfd;
+    padding: 50px 20px;
+    background-color: #FDF4E3; /* Cream background */
   }
 
   #our-products h2 {
-    font-size: 2.5rem;
+    font-family: 'Playfair Display', serif;
+    font-size: 36px;
     font-weight: bold;
-    color: #333;
-    margin-bottom: 30px;
+    color: #6B4226; /* Dark brown */
+    margin-bottom: 20px;
   }
 
-  /* Estilo da grade de produtos */
+  /* Product Grid Styles */
   .product-grid {
     display: grid;
-    gap: 24px;
-    margin-top: 32px;
+    gap: 20px;
+    margin-top: 20px;
+    width: 100%;
   }
 
-  /* Definindo diferentes breakpoints */
-  @media (min-width: 576px) {
+  /* Breakpoints for responsiveness */
+  @media (max-width: 576px) {
     .product-grid {
-      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      grid-template-columns: 1fr;
+    }
+
+    #our-products h2 {
+      font-size: 28px;
     }
   }
 
-  @media (min-width: 768px) {
+  @media (min-width: 576px) and (max-width: 768px) {
     .product-grid {
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 32px;
+      grid-template-columns: repeat(2, 1fr);
     }
+  }
 
-    #our-products {
-      padding: 60px 40px;
+  @media (min-width: 768px) and (max-width: 1024px) {
+    .product-grid {
+      grid-template-columns: repeat(3, 1fr);
     }
   }
 
   @media (min-width: 1024px) {
     .product-grid {
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      grid-template-columns: repeat(4, 1fr);
     }
 
     #our-products h2 {
-      font-size: 3rem;
+      font-size: 40px;
     }
   }
 
-
-
-  /* Melhorias de responsividade geral */
-  @media (max-width: 576px) {
-    .product-grid {
-      grid-template-columns: 1fr;
-      gap: 16px;
-    }
-
-    .product-card {
-      padding: 16px;
-    }
-
-    #our-products h2 {
-      font-size: 2rem;
-    }
+  /* Additional hover effect for product cards */
+  .product-grid > * {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
   }
+
+  .product-grid > *:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+  }
+
 </style>

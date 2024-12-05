@@ -1,3 +1,4 @@
+<!--src/lib/components/Highlights.svelte-->
 <script lang="ts">
     import type { Highlight } from "$lib/types/Highlight";
     export let highlights: Highlight[];

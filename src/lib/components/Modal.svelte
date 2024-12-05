@@ -1,4 +1,3 @@
-<!--src/lib/components/Modal.svelte-->
 <script lang="ts">
   export let isOpen: boolean;
   export let onClose: () => void;
@@ -8,15 +7,20 @@
     isMobile = window.innerWidth <= 768;
   }
 
-  const closeModal = () => {
-    onClose();
-  };
+  const closeModal = () => onClose();
 </script>
 
 {#if isOpen}
-  <div class="modal-overlay" on:click={closeModal}>
+  <div
+    class="modal-overlay"
+    tabindex="-1"
+    on:click={closeModal}
+    aria-hidden={!isOpen}
+  >
     <div
       class="modal-content {isMobile ? 'bottom-sheet' : ''}" 
+      role="dialog"
+      aria-modal="true"
       on:click|stopPropagation
     >
       {#if isMobile}
@@ -28,14 +32,13 @@
 {/if}
 
 <style>
-   /* Overlay com o fundo escuro */
-   .modal-overlay {
+  .modal-overlay {
     position: fixed;
     top: 0;
     left: 0;
     right: 0;
     bottom: 0;
-    background: rgba(0, 0, 0, 0.7); /* Fundo mais escuro */
+    background: rgba(0, 0, 0, 0.7);
     display: flex;
     justify-content: center;
     align-items: center;
@@ -43,11 +46,10 @@
     animation: fadeIn 0.3s ease-in;
   }
 
-  /* Conteúdo do modal com estilo similar ao CartModal */
   .modal-content {
-    background: #ffffff;
+    background: linear-gradient(135deg, #FFECD1, #FFF7E6);
     padding: 30px;
-    border-radius: 12px;
+    border-radius: 16px;
     width: 90%;
     max-width: 600px;
     text-align: center;
@@ -55,7 +57,6 @@
     animation: slideIn 0.3s ease-in;
   }
 
-  /* Estilo de bottom-sheet para mobile */
   .bottom-sheet {
     position: fixed;
     bottom: 0;
@@ -66,19 +67,19 @@
     border-top-left-radius: 16px;
     border-top-right-radius: 16px;
     padding: 24px;
-    background: #ffffff;
+    background: linear-gradient(135deg, #FFECD1, #FFF7E6);
     box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.15);
+    animation: slideUp 0.3s ease-in-out;
   }
 
   .drag-handle {
     width: 50px;
     height: 5px;
-    background-color: #beb7b7;
+    background-color: #E76F51;
     border-radius: 3px;
     margin: 0 auto 12px auto;
   }
 
-  /* Animações de fade e slide */
   @keyframes fadeIn {
     from {
       opacity: 0;
@@ -96,6 +97,15 @@
     to {
       transform: translateY(0);
       opacity: 1;
+    }
+  }
+
+  @keyframes slideUp {
+    from {
+      transform: translateY(100%);
+    }
+    to {
+      transform: translateY(0);
     }
   }
 </style>
