@@ -50,6 +50,8 @@
   {/if}
 </header>
 
+<!--adicionar responsividade para o projeto por meio de um menu ao estar em um dipositivo mobile-->
+
 <style>
   /* Estilização geral do header */
   header {

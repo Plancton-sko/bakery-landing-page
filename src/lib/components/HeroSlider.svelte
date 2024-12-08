@@ -92,6 +92,8 @@
   </div>
 </section>
 
+<!--enhancing-->
+
 <style>
   /* Estilos gerais para o hero slider */
   #hero {

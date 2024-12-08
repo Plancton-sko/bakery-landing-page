@@ -90,6 +90,8 @@
   </Modal>
 {/if}
 
+ <!--adicionar o enhancing do svelteKit para diminuir o peso do site e melhorar a desempenho do site-->
+
 
 <style>
     .product-card {

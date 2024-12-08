@@ -7,7 +7,7 @@ export let products: Product[] = [
       id: '550e8400-e29b-41d4-a716-446655440000',
       name: 'White Flour Bread',
       description: 'Fresh bread made with white flour, ideal for accompanying meals or making sandwiches.',
-      price: 490,
+      price: 4.90,
       category: Categories.BREAD,
       image: '/images/white-flour-bread.webp'
     },
@@ -15,7 +15,7 @@ export let products: Product[] = [
       id: '550e8400-e29b-41d4-a716-446655440001',
       name: 'Whole Wheat Bread',
       description: 'Healthy and tasty bread, made with whole wheat flour for a rustic touch.',
-      price: 590,
+      price: 5.90,
       category: Categories.BREAD,
       image: '/images/wholemeal-bread.webp'
     },

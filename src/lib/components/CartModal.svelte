@@ -133,6 +133,8 @@
   </div>
 </div>
 
+<!--Salvar os pedidos do cliente por meio do IndexedDB-->
+
 <style>
   .modal-overlay {
     position: fixed;

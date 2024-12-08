@@ -1,10 +1,8 @@
 <script lang="ts">
     import { onMount } from 'svelte';
     import { isCartOpen } from '$lib/stores/cart';
-
     export let isOpen = false;
     export let onClose = () => {};
-
     const handleOverlayClick = () => onClose();
 
     // Close the bottom sheet if `isCartOpen` becomes false
@@ -16,7 +14,7 @@
 </script>
 
 {#if isOpen}
-<div class="overlay" on:click={handleOverlayClick}></div>
+<div class="overlay" on:click|stopPropagation={handleOverlayClick}></div>
 <div class="bottom-sheet">
     <div class="drag-indicator"></div>
     <slot></slot>
