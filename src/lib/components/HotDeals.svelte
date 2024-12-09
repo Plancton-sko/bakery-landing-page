@@ -33,6 +33,7 @@
     margin: 20px auto;
     max-width: 1200px;
     border-radius: 12px;
+    
 }
 
 .hot-deals h2 {
@@ -40,12 +41,12 @@
     font-size: 36px;
     font-weight: bold;
     margin-bottom: 20px;
-    color: #6B4226; /* Dark brown */
+    color: var(--primary-color); /* Dark brown */
 }
 
 .hot-deals p {
     font-size: 18px;
-    color: #6B4226;
+    color: var(--primary-color);
     margin-bottom: 30px;
 }
 

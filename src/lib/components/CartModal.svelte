@@ -151,7 +151,7 @@
   }
 
   .modal-content {
-    background: #FDF4E3; /* Cor de fundo do AboutUs */
+    background: var(--background-color); /* Cor de fundo do AboutUs */
     padding: 30px;
     border-radius: 12px;
     width: 90%;
@@ -189,21 +189,21 @@
   }
 
   ul li:hover {
-    background-color: #FDF4E3; /* Realce ao passar o mouse */
+    background-color: var(--background-color); /* Realce ao passar o mouse */
   }
 
   .item-name {
     flex: 1;
     text-align: left;
     font-weight: 500;
-    color: #6B4226;
+    color: var(--primary-color);
   }
 
   .item-price {
     flex: 1;
     text-align: center;
     font-size: 15px;
-    color: #6B4226;
+    color: var(--primary-color);
   }
 
   .item-actions {
@@ -214,7 +214,7 @@
   }
 
   .quantity-btn, .remove-btn {
-    background-color: #F4A261; /* Cor de destaque */
+    background-color: var(--third-color); /* Cor de destaque */
     color: #fff;
     border: none;
     border-radius: 5px;
@@ -276,7 +276,7 @@
   label {
     font-weight: bold;
     font-size: 15px;
-    color: #6B4226;
+    color: var(--primary-color);
     margin-bottom: 5px;
   }
 
@@ -290,7 +290,7 @@
   }
 
   input:focus {
-    border-color: #F4A261;
+    border-color: var(--third-color);
     outline: none;
     box-shadow: 0 0 5px rgba(244, 162, 97, 0.3);
   }

@@ -4,15 +4,14 @@
   import { writable, derived } from "svelte/store";
   import { Categories } from "$lib/enums/Categories";
   import type { Product } from "$lib/types/Product";
-  import { products as productStore } from "$lib/stores/products"; // Importa a store de produtos
-  import CategoryNav from "./CategoryNav.svelte"; // Importa o componente de navegação de categorias
-  import ProductCard from "./ProductCard.svelte"; // Importa o novo componente ProductCard
+  import { products as productStore } from "$lib/stores/products";
+  import CategoryNav from "./CategoryNav.svelte";
+  import ProductCard from "./ProductCard.svelte";
 
-  export let products: Product[]; // Produtos recebidos como propriedade
+  export let products: Product[];
 
   const selectedCategory = writable(Categories.ALL);
 
-  // Store derivada para produtos filtrados com base na categoria
   const filteredProducts = derived(
     [productStore, selectedCategory],
     ([$productsStore, $selectedCategory]) => {
@@ -25,25 +24,21 @@
     }
   );
 
-  // Carrega os produtos na store quando o componente monta
   onMount(() => {
     productStore.set(products);
   });
 
-  // Array de categorias para passar ao componente de navegação
   const categoriesList = Object.values(Categories);
 </script>
 
 <section id="our-products">
   <h2>Our Products</h2>
 
-  <!-- Componente de Navegação de Categorias -->
   <CategoryNav
     categories={categoriesList}
     on:select={(event) => selectedCategory.set(event.detail)}
   />
 
-  <!-- Grade de Produtos Filtrados -->
   <div class="product-grid">
     {#each $filteredProducts as product (product.id)}
       <ProductCard {product} />
@@ -56,15 +51,20 @@
   #our-products {
     text-align: center;
     padding: 50px 20px;
-    background-color: #FDF4E3; /* Cream background */
+    background-color: var(--background-color); /* Usando variável de fundo */
   }
 
   #our-products h2 {
     font-family: 'Playfair Display', serif;
     font-size: 36px;
     font-weight: bold;
-    color: #6B4226; /* Dark brown */
+    color: var(--primary-color); /* Usando cor primária */
     margin-bottom: 20px;
+    transition: color var(--transition-time); /* Transição suave para hover */
+  }
+
+  #our-products h2:hover {
+    color: var(--secondary-color); /* Destaque ao passar o mouse */
   }
 
   /* Product Grid Styles */
@@ -107,5 +107,4 @@
       font-size: 40px;
     }
   }
-
 </style>

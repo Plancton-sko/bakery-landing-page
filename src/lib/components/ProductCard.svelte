@@ -125,7 +125,7 @@
     font-family: 'Playfair Display', serif;
     font-size: 20px;
     font-weight: bold;
-    color: #6b4226;
+    color: var(--primary-color);
     margin: 16px 0 8px;
     text-align: center;
   }

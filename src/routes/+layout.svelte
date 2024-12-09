@@ -41,4 +41,7 @@
     align-items: center;
     height: 100vh;
   }
+  body{
+    background-color: #FDF4E3;
+  }
 </style>

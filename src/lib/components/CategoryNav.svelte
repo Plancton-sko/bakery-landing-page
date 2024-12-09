@@ -53,7 +53,7 @@
   }
 
   .product-nav button.selected {
-    color: #6b4226; /* Destaque para a categoria ativa */
+    color: --primary-color; /* Destaque para a categoria ativa */
     font-weight: bold;
     border-bottom: 2px solid #f5c518; /* Linha de destaque */
   }

@@ -1,11 +1,11 @@
-:root {
-    --primary-color: #2b17db;
-    --secondary-color: #1e0ef7;
-    --tertiary-color: #14d61e;
-    --text-color: #666;
-    --bg-light: #f8f8f8;
-    --bg-dark: #2b16e6;
-    --font-family: 'Arial', sans-serif;
-    --breakpoint-mobile: 768px;
-    background-color: #FDF4E3;
-  }
+root {
+  --primary-color: #6B4226; /* Cor marrom usada nos textos e botões */
+  --secondary-color: #F5C518; /* Cor amarela de destaque */
+  --third-color: #F4A261
+  --background-color: #FDF4E3; /* Fundo principal */
+  --text-color: #333; /* Cor padrão para textos */
+  --light-text: #555; /* Cor para textos secundários */
+  --dark-overlay: rgba(0, 0, 0, 0.3); /* Fundo de overlay */
+  --transition-time: 0.3s; /* Padrão para transições */
+  background-color: #FDF4E3;
+}

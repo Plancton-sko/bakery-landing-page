@@ -60,7 +60,7 @@
     }
 
     .bottom-sheet > slot {
-        color: #6B4226;
+        color: var(--primary-color);
         font-family: 'Roboto', sans-serif;
     }
 

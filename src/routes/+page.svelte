@@ -8,6 +8,7 @@
   import OurProducts from "$lib/components/OurProducts.svelte";
   import { products } from "$lib/consts/Products";
   import type { Product } from "$lib/types/Product";
+ 
 
   export let data: { products: Product[] };
 </script>
@@ -21,5 +22,11 @@
   <HotDeals />
   <Contact />
 </main>
+
+<style>
+  main{
+    background-color: #FDF4E3;
+  }
+</style>
 
   
