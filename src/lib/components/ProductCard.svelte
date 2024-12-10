@@ -93,8 +93,12 @@
  <!--adicionar o enhancing do svelteKit para diminuir o peso do site e melhorar a desempenho do site-->
 
 
+
 <style>
-    .product-card {
+
+  /* fix css problem and try to fix this fucking global.css why the fucj this doesn't work  */
+
+  .product-card {
     display: flex;
     flex-direction: column;
     align-items: center;

@@ -13,7 +13,9 @@
   export let data: { products: Product[] };
 </script>
 
-<head> </head>
+<head> 
+  
+</head>
 
 <main>
   <Hero />

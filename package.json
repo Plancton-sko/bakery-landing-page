@@ -22,6 +22,7 @@
 	},
 	"type": "module",
 	"dependencies": {
+		"idb": "^8.0.0",
 		"uuid": "^10.0.0"
 	}
 }
