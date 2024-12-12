@@ -151,7 +151,7 @@
   }
 
   .modal-content {
-    background: var(--background-color); /* Cor de fundo do AboutUs */
+    background: white; /* Cor de fundo do AboutUs */
     padding: 30px;
     border-radius: 12px;
     width: 90%;

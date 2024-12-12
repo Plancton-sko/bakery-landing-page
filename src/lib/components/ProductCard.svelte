@@ -42,7 +42,7 @@
   on:click={openModal}
   type="button"
 >
-  <img src={product.image} alt={product.name} />
+  <img src={product.image} alt={product.name}/>
   <h3>{product.name}</h3>
   <p>{formatPrice(product.price)}</p>
 </button>
@@ -90,13 +90,8 @@
   </Modal>
 {/if}
 
- <!--adicionar o enhancing do svelteKit para diminuir o peso do site e melhorar a desempenho do site-->
-
-
-
+ 
 <style>
-
-  /* fix css problem and try to fix this fucking global.css why the fucj this doesn't work  */
 
   .product-card {
     display: flex;
