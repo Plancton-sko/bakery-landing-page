@@ -42,7 +42,7 @@
   on:click={openModal}
   type="button"
 >
-  <img src={product.image} alt={product.name}/>
+  <img src={product.image} alt={product.name} loading="lazy"/>
   <h3>{product.name}</h3>
   <p>{formatPrice(product.price)}</p>
 </button>
@@ -53,7 +53,7 @@
       <div class="bottomSheet-content">
           <h2>{product.name}</h2>
           <p>{product.description}</p>
-          <img src={product.image} alt={product.name} class="imgBottomSheet" />
+          <img src={product.image} alt={product.name} class="imgBottomSheet" loading="lazy" />
           <p>{formatPrice(product.price)}</p>
 
           <label for="quantity">Quantity:</label>
@@ -73,7 +73,7 @@
       <div class="modal-content">
           <h2>{product.name}</h2>
           <p>{product.description}</p>
-          <img src={product.image} alt={product.name} class="imgModal" />
+          <img src={product.image} alt={product.name} class="imgModal" loading="lazy" />
           <p>{formatPrice(product.price)}</p>
 
           <label for="quantity">Quantity:</label>

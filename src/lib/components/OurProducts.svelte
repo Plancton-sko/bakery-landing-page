@@ -33,12 +33,12 @@
 
 <section id="our-products">
   <h2>Our Products</h2>
-
-  <CategoryNav
-    categories={categoriesList}
-    on:select={(event) => selectedCategory.set(event.detail)}
-  />
-
+  <div class="Category">
+    <CategoryNav
+      categories={categoriesList}
+      on:select={(event) => selectedCategory.set(event.detail)}
+    />
+  </div>
   <div class="product-grid">
     {#each $filteredProducts as product (product.id)}
       <ProductCard {product} />
@@ -74,7 +74,7 @@
     margin-top: 20px;
     width: 100%;
   }
-
+  
   /* Breakpoints for responsiveness */
   @media (max-width: 576px) {
     .product-grid {

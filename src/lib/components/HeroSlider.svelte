@@ -2,34 +2,7 @@
   <script lang="ts">
     import { onMount } from "svelte";
     import { writable, type Writable } from "svelte/store";
-
-    interface Slide {
-      src: string;
-      alt: string;
-      title: string;
-      description: string;
-    }
-
-    const slides: Slide[] = [
-      {
-        src: "/images/angelo-pantazis.jpg",
-        alt: "Delicious artisan bread",
-        title: "Artisan Bread",
-        description: "Experience the taste of freshly baked, handcrafted bread."
-      },
-      {
-        src: "/images/clark-young.jpg",
-        alt: "Freshly baked croissants",
-        title: "Flaky Croissants",
-        description: "Enjoy our buttery, flaky croissants every morning."
-      },
-      {
-        src: "/images/ddp-CceG6jpl19M-unsplash.jpg",
-        alt: "Sourdough bread on display",
-        title: "Sourdough Specialties",
-        description: "Our sourdough is made with love and a long fermentation process."
-      }
-    ];
+    import { slides } from "$lib/consts/Slides";
 
     let currentSlideIndex: Writable<number> = writable(0);
     let autoSlideInterval: ReturnType<typeof setInterval>;
@@ -59,7 +32,7 @@
     <!-- Cada slide -->
     {#each slides as { src, alt, title, description }, index}
       <picture class="slide" class:active={index === $currentSlideIndex}>
-        <img src={src} alt={alt} />
+        <img src={src} alt={alt} loading="lazy"/>
       </picture>
     {/each}
 
@@ -91,8 +64,6 @@
       {/each}
     </div>
   </section>
-
-  <!--enhancing-->
 
   <style>
     /* Estilos gerais para o hero slider */
