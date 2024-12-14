@@ -1,22 +1,103 @@
 <script lang="ts">
-    import { onMount } from 'svelte';
+    import { createEventDispatcher, onMount, onDestroy } from 'svelte';
     import { isCartOpen } from '$lib/stores/cart';
+
+    const dispatch = createEventDispatcher();
+
     export let isOpen = false;
     export let onClose = () => {};
-    const handleOverlayClick = () => onClose();
 
-    // Close the bottom sheet if `isCartOpen` becomes false
+    let bottomSheet: HTMLDivElement | null = null;
+    let initialY = 0;
+    let lastY = 0;
+    let lastTime = 0;
+    let velocity = 0;
+    let isDragging = false;
+    let movedDistance = 0;
+    const DRAG_THRESHOLD = 10; // Minimum distance to be considered a drag
+
+    const closeBottomSheet = () => {
+        document.body.classList.remove('no-scroll');
+        isOpen = false;
+        onClose();
+    };
+
+    function handleTouchStart(event: TouchEvent) {
+        initialY = event.touches[0].clientY;
+        lastY = initialY;
+        lastTime = Date.now();
+        isDragging = true;
+        velocity = 0;
+        movedDistance = 0;
+    }
+
+    function handleTouchMove(event: TouchEvent) {
+        if (isDragging && bottomSheet) {
+            const currentY = event.touches[0].clientY;
+            const deltaY = currentY - initialY;
+            movedDistance = Math.abs(deltaY);
+
+            if (movedDistance > DRAG_THRESHOLD) {
+                bottomSheet.style.transform = `translateY(${deltaY}px)`;
+
+                // Calculate velocity
+                const now = Date.now();
+                const deltaTime = now - lastTime;
+                velocity = (currentY - lastY) / deltaTime;
+
+                lastY = currentY;
+                lastTime = now;
+            }
+        }
+    }
+
+    function handleTouchEnd() {
+        if (isDragging && bottomSheet) {
+            if (movedDistance <= DRAG_THRESHOLD) {
+                // Treat as click if moved distance is less than threshold
+                return;
+            }
+
+            const currentY = parseFloat(bottomSheet.style.transform.replace('translateY(', '').replace('px)', ''));
+            const bottomSheetHeight = bottomSheet.offsetHeight;
+
+            // Determine final position based on velocity and height of bottomSheet
+            let finalY = currentY + velocity * 100;
+
+            if (finalY < bottomSheetHeight * 0.35) {
+                bottomSheet.style.transition = 'transform 0.3s ease-in-out';
+                bottomSheet.style.transform = 'translateY(0)';
+            } else {
+                closeBottomSheet();
+            }
+
+            isDragging = false;
+        }
+    }
+
     onMount(() => {
-        isCartOpen.subscribe((value) => {
-            if (!value) onClose();
-        });
+        document.body.classList.add('no-scroll');
+    });
+
+    onDestroy(() => {
+        document.body.classList.remove('no-scroll');
+    });
+
+    isCartOpen.subscribe((value) => {
+        if (!value) closeBottomSheet();
     });
 </script>
 
 {#if isOpen}
-<div class="overlay" on:click|stopPropagation={handleOverlayClick}></div>
-<div class="bottom-sheet">
-    <div class="drag-indicator"></div>
+<div class="overlay" on:click={closeBottomSheet}></div>
+<div
+    bind:this={bottomSheet}
+    class="bottom-sheet"
+    on:touchstart={handleTouchStart}
+    on:touchmove={handleTouchMove}
+    on:touchend={handleTouchEnd}
+>
+    <div class="drag-handle"></div>
     <slot></slot>
 </div>
 {/if}
@@ -37,7 +118,7 @@
         bottom: 0;
         left: 0;
         right: 0;
-        background: #FFECD1; /* Consistente com AboutUs */
+        background: #FFECD1;
         padding: 20px;
         border-top-left-radius: 16px;
         border-top-right-radius: 16px;
@@ -45,29 +126,28 @@
         z-index: 1000;
         transform: translateY(0);
         transition: transform 0.3s ease-in-out;
-
-        /* Altura reduzida */
-        max-height: 50%; 
-        overflow-y: auto; /* Adiciona scroll se o conteúdo exceder o espaço */
+        max-height: 50%;
+        overflow-y: auto;
     }
 
-    .drag-indicator {
+    .drag-handle {
         width: 60px;
         height: 4px;
-        background-color: #D97A07; /* Cor harmonizada */
+        background-color: #D97A07;
         border-radius: 2px;
         margin: 0 auto 10px auto;
+        cursor: grab;
     }
 
-    .bottom-sheet > slot {
-        color: var(--primary-color);
-        font-family: 'Roboto', sans-serif;
+    .no-scroll {
+        overflow: hidden;
     }
 
-    /* Responsividade */
     @media (max-width: 768px) {
         .bottom-sheet {
-            max-height: 60%; /* Maior altura em telas menores para mais espaço */
+            max-height: 60%;
         }
     }
 </style>
+
+<!--Eu preciso consertar a porra do vazamento de açõe entre o bottomSheets e o restante mas eu não tenho nenhuma ideia com caralhos eu vou fazer essa merda-->
