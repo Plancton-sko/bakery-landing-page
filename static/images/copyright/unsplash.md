@@ -27,3 +27,12 @@ source: https://unsplash.com/pt-br/fotografias/foto-em-close-up-de-biscoitos-ass
 ---
 ### bread-rolls.webp
 source: https://unsplash.com/pt-br/fotografias/pao-fatiado-na-mesa-QXSvbDkiJmY
+---
+### angelo-pantazis.webp
+source: https://unsplash.com/pt-br/fotografias/carne-grelhada-na-grelha-preta-2-U0A2tNYhM
+---
+### nadya-spetnitskaya.webp
+source: https://unsplash.com/pt-br/fotografias/pessoa-que-faz-massa-ao-lado-de-rolo-de-madeira-marrom-tOYiQxF9-Ys
+---
+### clark-young.webp
+source: https://unsplash.com/pt-br/fotografias/paes-marrons-no-armario-de-madeira-marrom-jfbMODLPrQ0

@@ -7,7 +7,7 @@
       </p>
       <div class="about-content">
         <div class="image-container">
-          <img src="/images/nadya-spetnitskaya.jpg" alt="Imagem de pão" />
+          <img src="/images/nadya-spetnitskaya.webp" alt="Imagem de pão" />
         </div>
         <div class="text-container">
           <h3>Qual é o seu pão favorito para sanduíches?</h3>

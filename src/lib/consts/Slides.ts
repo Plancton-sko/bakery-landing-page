@@ -9,13 +9,13 @@ interface Slide {
   
 export const slides: Slide[] = [
     {
-      src: "/images/angelo-pantazis.jpg",
+      src: "/images/angelo-pantazis.webp",
       alt: "Delicious artisan bread",
       title: "Artisan Bread",
       description: "Experience the taste of freshly baked, handcrafted bread."
     },
     {
-      src: "/images/clark-young.jpg",
+      src: "/images/clark-young.webp",
       alt: "Freshly baked croissants",
       title: "Flaky Croissants",
       description: "Enjoy our buttery, flaky croissants every morning."
