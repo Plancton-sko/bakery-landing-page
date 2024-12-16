@@ -139,15 +139,9 @@
         cursor: grab;
     }
 
-    .no-scroll {
-        overflow: hidden;
-    }
-
     @media (max-width: 768px) {
         .bottom-sheet {
             max-height: 60%;
         }
     }
 </style>
-
-<!--Eu preciso consertar a porra do vazamento de açõe entre o bottomSheets e o restante mas eu não tenho nenhuma ideia com caralhos eu vou fazer essa merda-->

@@ -11,6 +11,9 @@
   export let products: Product[];
 
   const selectedCategory = writable(Categories.ALL);
+  const itemsToShow = writable(8); // Limit for initial products displayed
+  const initialLimit = 8; // Default number of products to show
+  const increment = 8; // Number of products to add when "See More" is clicked
 
   const filteredProducts = derived(
     [productStore, selectedCategory],
@@ -24,11 +27,24 @@
     }
   );
 
+  const limitedProducts = derived(
+    [filteredProducts, itemsToShow],
+    ([$filteredProducts, $itemsToShow]) => $filteredProducts.slice(0, $itemsToShow)
+  );
+
   onMount(() => {
     productStore.set(products);
   });
 
   const categoriesList = Object.values(Categories);
+
+  function loadMore() {
+    itemsToShow.update((n) => n + increment);
+  }
+
+  function showLess() {
+    itemsToShow.set(initialLimit);
+  }
 </script>
 
 <section id="our-products">
@@ -40,9 +56,17 @@
     />
   </div>
   <div class="product-grid">
-    {#each $filteredProducts as product (product.id)}
+    {#each $limitedProducts as product (product.id)}
       <ProductCard {product} />
     {/each}
+  </div>
+  <div class="controls">
+    {#if $limitedProducts.length < $filteredProducts.length}
+      <button class="see-more" on:click={loadMore}>See More</button>
+    {/if}
+    {#if $limitedProducts.length > initialLimit}
+      <button class="see-less" on:click={showLess}>See Less</button>
+    {/if}
   </div>
 </section>
 
@@ -51,20 +75,20 @@
   #our-products {
     text-align: center;
     padding: 50px 20px;
-    background-color: var(--background-color); /* Usando variável de fundo */
+    background-color: var(--background-color);
   }
 
   #our-products h2 {
     font-family: 'Playfair Display', serif;
     font-size: 36px;
     font-weight: bold;
-    color: var(--primary-color); /* Usando cor primária */
+    color: var(--primary-color);
     margin-bottom: 20px;
-    transition: color var(--transition-time); /* Transição suave para hover */
+    transition: color var(--transition-time);
   }
 
   #our-products h2:hover {
-    color: var(--secondary-color); /* Destaque ao passar o mouse */
+    color: var(--secondary-color);
   }
 
   /* Product Grid Styles */
@@ -73,6 +97,31 @@
     gap: 20px;
     margin-top: 20px;
     width: 100%;
+  }
+
+  /* Button Styles */
+  .controls {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 20px;
+  }
+
+  .see-more,
+  .see-less {
+    padding: 10px 20px;
+    font-size: 16px;
+    color: white;
+    background-color: var(--primary-color);
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color var(--transition-time);
+  }
+
+  .see-more:hover,
+  .see-less:hover {
+    background-color: var(--secondary-color);
   }
   
   /* Breakpoints for responsiveness */
