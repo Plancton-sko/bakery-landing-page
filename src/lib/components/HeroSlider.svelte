@@ -65,6 +65,8 @@
     </div>
   </section>
 
+  <!--add an buttom that direct the user to our products-->
+
   <style>
     /* Estilos gerais para o hero slider */
     #hero {
