@@ -129,7 +129,7 @@
         <button class="checkout-btn" type="submit">Confirmar e Enviar Pedido</button>
       </form>
     {/if}
-    <button class="close-btn" on:click={closeCartModal}>Continue Buying</button>
+    <button class="close-btn" on:click={closeCartModal}>Back</button>
   </div>
 </div>
 
@@ -153,19 +153,19 @@
   .modal-content {
     background: white; /* Cor de fundo do AboutUs */
     padding: 30px;
-    border-radius: 12px;
+    border-radius: var(--border-radius);
     width: 90%;
     max-width: 600px;
     text-align: center;
-    box-shadow: 0px 8px 24px rgba(0, 0, 0, 0.2);
+    box-shadow: var(--box-shadow-intense);
     animation: slideIn 0.3s ease-in;
   }
 
   h2 {
-    font-family: 'Playfair Display', serif;
+    font-family: var(--font-primary);
     font-size: 26px;
     font-weight: bold;
-    margin-bottom: 25px;
+    margin-bottom: var(--spacing-lg);
     color: #493121; /* Título em marrom */
   }
 
@@ -178,7 +178,7 @@
   }
 
   ul li {
-    font-family: 'Roboto', sans-serif;
+    font-family: var(--font-primary);
     font-size: 16px;
     padding: 15px 10px;
     border-bottom: 1px solid #EAD9C3; /* Sutil separação */
@@ -215,7 +215,7 @@
 
   .quantity-btn, .remove-btn {
     background-color: var(--third-color); /* Cor de destaque */
-    color: #fff;
+    color: var(--white-text);
     border: none;
     border-radius: 5px;
     padding: 5px 12px;
@@ -225,38 +225,38 @@
   }
 
   .quantity-btn:hover {
-    background-color: #E76F51; /* Cor mais intensa */
+    background-color: var(--highlight-color); /* Cor mais intensa */
   }
 
   .remove-btn {
-    background-color: #E63946; /* Botão de remover */
-    color: #fff;
+    background-color: var(--danger-color); /* Botão de remover */
+    color: var(--white-text);
     padding: 6px;
   }
 
   .remove-btn:hover {
-    background-color: #d84242;
+    background-color: var(--danger-color);
   }
   .close-btn{
-    background-color: #d84242;
-  }
-
-  .checkout-btn{
     background-color: #f58e2d;
   }
 
+  .checkout-btn{
+    background-color: var(--danger-color);
+  }
+
   .checkout-btn, .close-btn {
-    color: #fff;
+    color: var(--white-text);
     font-size: 16px;
     padding: 12px 20px;
     border: none;
-    border-radius: 6px;
+    border-radius: var(--border-radius-small);
     cursor: pointer;
     transition: background-color 0.3s, transform 0.2s;
   }
 
   .checkout-btn:hover, .close-btn:hover {
-    background-color: #E76F51;
+    background-color: var(--highlight-color);
     transform: scale(1.05);
   }
 

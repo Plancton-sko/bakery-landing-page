@@ -79,7 +79,7 @@
   }
 
   #our-products h2 {
-    font-family: 'Playfair Display', serif;
+    font-family: var(--font-primary);
     font-size: 36px;
     font-weight: bold;
     color: var(--primary-color);
@@ -111,7 +111,7 @@
   .see-less {
     padding: 10px 20px;
     font-size: 16px;
-    color: white;
+    color: var(--white-text);
     background-color: var(--primary-color);
     border: none;
     border-radius: 5px;

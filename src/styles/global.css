@@ -1,11 +1,54 @@
+/* src/style/global.css */
 :root {
-  --primary-color: #6B4226; /* Cor marrom usada nos textos e botões */
-  --secondary-color: #F5C518; /* Cor amarela de destaque */
-  --third-color: #F4A261
-  --background-color: #FDF4E3; /* Fundo principal */
-  --text-color: #333; /* Cor padrão para textos */
-  --light-text: #555; /* Cor para textos secundários */
-  --dark-overlay: rgba(0, 0, 0, 0.3); /* Fundo de overlay */
-  --transition-time: 0.3s; /* Padrão para transições */
-  background-color: #FDF4E3;
+  /* Cores principais */
+  --primary-color: #6B4226; 
+  --secondary-color: #F5C518; 
+  --third-color: #F4A261; 
+  --background-color: #FDF4E3; 
+  --button-background: #ebb916;  
+  --button-background-hover: #d6a514; 
+  --light-background: #FFF7E6; 
+  --dark-overlay: rgba(0, 0, 0, 0.3); 
+  
+  /* Texto */
+  --text-color: #333; 
+  --light-text: #555; 
+  --white-text: #fff;
+  --danger-color: #E63946; 
+  --highlight-color: #E76F51; 
+
+  /* Gradientes */
+  --gradient-primary: linear-gradient(135deg, #FFECD1, #FFF7E6); /* Gradiente usado no modal */
+  --gradient-overlay: rgba(0, 0, 0, 0.7); /* Gradiente para sobreposição escura */
+
+  /* Transições */
+  --transition-time: 0.3s; /* Tempo padrão para transições */
+
+  /* Sombras */
+  --box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1); 
+  --box-shadow-small: 0 4px 8px rgba(0, 0, 0, 0.1); 
+  --box-shadow-medium: 0 4px 12px rgba(0, 0, 0, 0.1); 
+  --box-shadow-intense: 0px 8px 24px rgba(0, 0, 0, 0.1); 
+
+  /* Espaçamentos */
+  --spacing-xs: 4px;
+  --spacing-sm: 8px;
+  --spacing-md: 16px;
+  --spacing-lg: 24px;
+  --spacing-xl: 32px;
+
+  /* Fontes */
+  --font-primary: 'Roboto', sans-serif;
+  --font-secondary: 'Playfair Display', serif;
+
+  /* Bordas */
+  --border-radius: 12px;
+  --border-radius-small: 6px;
+  --border-radius-medium: 8px;
+  --border-radius-large: 16px;
+
+  /* Outros */
+  --button-padding: 10px 20px; /* Padrão para botões */
+  --button-padding-small: 10px 15px;
+  --input-padding: 12px; /* Padrão para inputs */
 }

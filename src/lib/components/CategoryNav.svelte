@@ -32,7 +32,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    gap: 20px;
+    gap: var(--spacing-lg);
     flex-wrap: wrap; /* Quebra de linha para listas longas */
     margin-bottom: 20px;
     overflow-x: auto; /* Scroll horizontal em dispositivos menores */
@@ -43,9 +43,9 @@
     background-color: transparent;
     border: none;
     font-size: 1.1rem;
-    color: #555;
+    color: var(--light-text);
     cursor: pointer;
-    padding: 10px 15px;
+    padding: var(--button-padding-small);
     transition: color 0.3s ease, border-bottom 0.3s ease;
     border-bottom: 2px solid transparent;
     position: relative;
@@ -53,13 +53,13 @@
   }
 
   .product-nav button.selected {
-    color: --primary-color; /* Destaque para a categoria ativa */
+    color: var(--primary-color); /* Destaque para a categoria ativa */
     font-weight: bold;
-    border-bottom: 2px solid #f5c518; /* Linha de destaque */
+    border-bottom: 2px solid var(--secondary-color); /* Linha de destaque */
   }
 
   .product-nav button:hover {
-    color: #f5c518;
+    color: var(--secondary-color);
   }
 
   .product-nav button::after {
@@ -67,7 +67,7 @@
     display: block;
     width: 0;
     height: 2px;
-    background: #f5c518;
+    background: var(--secondary-color);
     transition: width 0.3s;
     margin-top: 5px;
     position: absolute;

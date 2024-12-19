@@ -80,9 +80,8 @@
     justify-content: space-between;
     align-items: center;
     padding: 15px 30px;
-    background-color: #FDF4E3;
+    background-color: var(--background-color);
     border-bottom: 1px solid #eaeaea;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0);
     position: sticky;
     top: 0;
     z-index: 1000;
@@ -91,17 +90,17 @@
   .logo {
     font-size: 24px;
     font-weight: bold;
-    color: #333;
+    color: var(--text-color);
   }
 
   .highlight {
-    color: #f5c518;
+    color: var(--secondary-color);
   }
 
   .desktop-nav ul {
     list-style: none;
     display: flex;
-    gap: 25px;
+    gap: var(--spacing-lg);
     padding: 0;
     margin: 0;
   }
@@ -110,19 +109,19 @@
     text-decoration: none;
     font-size: 16px;
     font-weight: 500;
-    color: #555;
+    color: var(--light-text);
     transition: color 0.3s;
   }
 
   .desktop-nav ul li a:hover {
-    color: #f5c518;
+    color: var(--secondary-color);
   }
 
   .cart {
     display: flex;
     align-items: center;
     background-color: #eed16a;
-    color: #fff;
+    color: var(--white-text);
     padding: 8px 16px;
     border-radius: 30px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
@@ -137,10 +136,10 @@
   .cart span {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: var(--spacing-sm);
     font-size: 15px;
     font-weight: bold;
-    color: #333;
+    color: var(--text-color);
   }
 
   .cart-text {
@@ -158,7 +157,7 @@
     right: 0;
     width: 75%;
     height: 100%;
-    background: #FDF4E3;
+    background: var(--background-color);
     box-shadow: -4px 0 8px rgba(0, 0, 0, 0.2);
     padding: 20px;
     z-index: 1001;
@@ -182,7 +181,7 @@
     text-decoration: none;
     font-size: 18px;
     font-weight: bold;
-    color: #333;
+    color: var(--text-color);
   }
 
   .close-menu {
@@ -191,7 +190,7 @@
     background: none;
     border: none;
     cursor: pointer;
-    color: #333;
+    color: var(--text-color);
   }
 
   @media (max-width: 768px) {

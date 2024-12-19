@@ -51,7 +51,7 @@
     .highlight-item img {
         width: 100%; /* A largura será 100% do container */
         min-height: 400px; /* Limite de altura de 400px */
-        border-radius: 8px;
+        border-radius: var(--border-radius-medium);
         object-fit: cover; /* Faz a imagem se ajustar como se fosse um "zoom" */
     }
 
@@ -62,7 +62,7 @@
     }
 
     .highlight-item p {
-        color: #333;
+        color: var(--text-color);
     }
 
     @media (max-width:720px) {

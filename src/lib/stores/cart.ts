@@ -69,4 +69,3 @@ export const decreaseQuantity = (productId: string): void => {
 export const clearCart = (): void => {
   cart.set([]);
 };
-

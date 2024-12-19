@@ -22,7 +22,7 @@
   <style>
   /* Geral */
   body {
-    font-family: 'Roboto', sans-serif;
+    font-family: var(--font-primary);
     background-color: var(--background-color);
     color: var(--primary-color);
     margin: 0;
@@ -40,7 +40,7 @@
   }
 
   section#about-us h2 {
-    font-family: 'Playfair Display', serif;
+    font-family: var(--font-primary);
     font-size: 36px;
     font-weight: bold;
     margin-bottom: 20px;
@@ -60,8 +60,8 @@
     align-items: center;
     justify-content: space-between;
     background-color: #fff;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-    border-radius: 12px;
+    box-shadow: var(--box-shadow);
+    border-radius: var(--border-radius);
     padding: 20px;
     gap: 20px;
   }
@@ -77,9 +77,9 @@
   .image-container img {
     width: 100%;
     height: auto;
-    border-radius: 12px;
+    border-radius: var(--border-radius);
     object-fit: cover;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    box-shadow: var(--box-shadow-small);
   }
 
   .text-container {
@@ -88,7 +88,7 @@
   }
 
   .text-container h3 {
-    font-family: 'Playfair Display', serif;
+    font-family: var(--font-primary);
     font-size: 28px;
     font-weight: bold;
     margin-bottom: 15px;
@@ -104,9 +104,9 @@
 
   .text-container button {
     background-color: var(--third-color);
-    color: #fff;
+    color: var(--white-text);
     border: none;
-    padding: 10px 20px;
+    padding: var(--button-padding);
     font-size: 14px;
     border-radius: 6px;
     cursor: pointer;
@@ -114,7 +114,7 @@
   }
 
   .text-container button:hover {
-    background-color: #E76F51;
+    background-color: var(--highlight-color);
     transform: scale(1.05);
   }
   </style>

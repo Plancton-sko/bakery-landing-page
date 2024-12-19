@@ -69,23 +69,23 @@
     margin: 20px auto;
     padding: 40px 20px ;
     background-color: #fffaf3; /* Fundo neutro */
-    box-shadow: 0px 8px 24px rgba(0, 0, 0, 0.1);
-    border-radius: 12px;
-    font-family: 'Roboto', sans-serif;
+    box-shadow: var(--box-shadow-intense);
+    border-radius: var(--border-radius);
+    font-family: var(--font-primary);
   }
 
   #contact form {
     display: flex;
     flex-direction: column;
     gap: 20px;
-    padding: 15px;
+    padding: var(--spacing-md);
   }
 
   #contact label {
     font-size: 1.1rem;
     font-weight: bold;
-    color: #333; /* Texto escuro */
-    margin-bottom: 8px;
+    color: var(--text-color); /* Texto escuro */
+    margin-bottom: var(--spacing-sm);
   }
 
   #contact input,
@@ -96,12 +96,12 @@
     border: 2px solid #eaeaea; /* Cinza claro */
     border-radius: 8px;
     transition: border-color 0.3s ease, box-shadow 0.3s ease;
-    font-family: 'Roboto', sans-serif;
+    font-family: var(--font-primary);
   }
 
   #contact input:focus,
   #contact textarea:focus {
-    border-color: #ebb916; /* Dourado */
+    border-color: var(--button-background); /* Dourado */
     outline: none;
     box-shadow: 0 0 8px rgba(235, 185, 22, 0.3); /* Glow dourado */
   }
@@ -111,19 +111,19 @@
   }
 
   #contact button {
-    background-color: #ebb916; /* Dourado */
+    background-color: var(--button-background); /* Dourado */
     color: white;
     border: none;
-    padding: 14px;
+    padding: var(--spacing-md);
     font-size: 1.1rem;
     font-weight: bold;
-    border-radius: 8px;
+    border-radius: var(--border-radius-medium);
     cursor: pointer;
     transition: background-color 0.3s ease, transform 0.2s ease;
   }
 
   #contact button:hover {
-    background-color: #d6a514; /* Dourado mais escuro */
+    background-color: var(--button-background-hover); 
     transform: scale(1.05);
   }
 

@@ -22,7 +22,6 @@
 	},
 	"type": "module",
 	"dependencies": {
-		"@sveltejs/enhanced-img": "^0.4.3",
 		"idb": "^8.0.1",
 		"uuid": "^10.0.0"
 	}

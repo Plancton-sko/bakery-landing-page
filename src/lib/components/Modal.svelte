@@ -47,13 +47,13 @@
   }
 
   .modal-content {
-    background: linear-gradient(135deg, #FFECD1, #FFF7E6);
+    background: var(--gradient-primary);
     padding: 30px;
     border-radius: 16px;
     width: 90%;
     max-width: 600px;
     text-align: center;
-    box-shadow: 0px 8px 24px rgba(0, 0, 0, 0.2);
+    box-shadow: var(--box-shadow-intense);
     animation: slideIn 0.3s ease-in;
   }
 
@@ -67,7 +67,7 @@
     border-top-left-radius: 16px;
     border-top-right-radius: 16px;
     padding: 24px;
-    background: linear-gradient(135deg, #FFECD1, #FFF7E6);
+    background: var(--gradient-primary);
     box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.15);
     animation: slideUp 0.3s ease-in-out;
   }
@@ -75,7 +75,7 @@
   .drag-handle {
     width: 50px;
     height: 5px;
-    background-color: #E76F51;
+    background-color: var(--highlight-color);
     border-radius: 3px;
     margin: 0 auto 12px auto;
   }
