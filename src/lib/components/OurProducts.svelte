@@ -91,6 +91,11 @@
     color: var(--secondary-color);
   }
 
+  .Category{
+    display: flex;
+    justify-content: center;
+  }
+
   /* Product Grid Styles */
   .product-grid {
     display: grid;
@@ -127,7 +132,7 @@
   /* Breakpoints for responsiveness */
   @media (max-width: 576px) {
     .product-grid {
-      grid-template-columns: 1fr;
+      grid-template-columns: repeat(2, 1fr);
     }
 
     #our-products h2 {

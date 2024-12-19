@@ -82,7 +82,7 @@
     padding: 15px 30px;
     background-color: var(--background-color);
     border-bottom: 1px solid #eaeaea;
-    position: sticky;
+    position: sticky;   /* Ver se vale ou não apena usar isso para o style do componente */
     top: 0;
     z-index: 1000;
   }

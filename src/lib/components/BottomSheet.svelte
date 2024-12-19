@@ -14,7 +14,9 @@
     let velocity = 0;
     let isDragging = false;
     let movedDistance = 0;
-    const DRAG_THRESHOLD = 10; // Minimum distance to be considered a drag
+
+    const DRAG_THRESHOLD = 10; // Minimum distance to consider a drag
+    const CLOSE_THRESHOLD = 100; // Distance to trigger close action
 
     const closeBottomSheet = () => {
         document.body.classList.remove('no-scroll');
@@ -22,61 +24,61 @@
         onClose();
     };
 
+    const resetBottomSheetPosition = () => {
+        if (bottomSheet) {
+            bottomSheet.style.transition = 'transform 0.3s ease-in-out';
+            bottomSheet.style.transform = 'translateY(0)';
+        }
+    };
+
     function handleTouchStart(event: TouchEvent) {
         initialY = event.touches[0].clientY;
         lastY = initialY;
         lastTime = Date.now();
         isDragging = true;
-        velocity = 0;
         movedDistance = 0;
+        velocity = 0;
+
+        if (bottomSheet) {
+            bottomSheet.style.transition = ''; // Remove transition during drag
+        }
     }
 
     function handleTouchMove(event: TouchEvent) {
-        if (isDragging && bottomSheet) {
-            const currentY = event.touches[0].clientY;
-            const deltaY = currentY - initialY;
-            movedDistance = Math.abs(deltaY);
+        if (!isDragging || !bottomSheet) return;
 
-            if (movedDistance > DRAG_THRESHOLD) {
-                bottomSheet.style.transform = `translateY(${deltaY}px)`;
+        const currentY = event.touches[0].clientY;
+        const deltaY = currentY - initialY;
+        movedDistance = Math.abs(deltaY);
 
-                // Calculate velocity
-                const now = Date.now();
-                const deltaTime = now - lastTime;
-                velocity = (currentY - lastY) / deltaTime;
+        if (deltaY > 0) {
+            bottomSheet.style.transform = `translateY(${deltaY}px)`;
 
-                lastY = currentY;
-                lastTime = now;
-            }
+            // Calculate velocity
+            const now = Date.now();
+            const deltaTime = now - lastTime; // Time difference
+            velocity = (currentY - lastY) / deltaTime;
+
+            lastY = currentY;
+            lastTime = now; // Update last time
         }
     }
 
     function handleTouchEnd() {
-        if (isDragging && bottomSheet) {
-            if (movedDistance <= DRAG_THRESHOLD) {
-                // Treat as click if moved distance is less than threshold
-                return;
-            }
+        if (!isDragging || !bottomSheet) return;
 
-            const currentY = parseFloat(bottomSheet.style.transform.replace('translateY(', '').replace('px)', ''));
-            const bottomSheetHeight = bottomSheet.offsetHeight;
+        isDragging = false;
+        const currentY = parseFloat(bottomSheet.style.transform.replace('translateY(', '').replace('px)', '')) || 0;
 
-            // Determine final position based on velocity and height of bottomSheet
-            let finalY = currentY + velocity * 100;
-
-            if (finalY < bottomSheetHeight * 0.35) {
-                bottomSheet.style.transition = 'transform 0.3s ease-in-out';
-                bottomSheet.style.transform = 'translateY(0)';
-            } else {
-                closeBottomSheet();
-            }
-
-            isDragging = false;
+        if (currentY > CLOSE_THRESHOLD || velocity > 0.5) {
+            closeBottomSheet();
+        } else {
+            resetBottomSheetPosition();
         }
     }
 
     onMount(() => {
-        document.body.classList.add('no-scroll');
+        if (isOpen) document.body.classList.add('no-scroll');
     });
 
     onDestroy(() => {
@@ -145,3 +147,5 @@
         }
     }
 </style>
+
+
