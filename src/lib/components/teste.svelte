@@ -1,9 +1,9 @@
-<!-- src/lib/components/BottomSheet.svelte -->
 <script lang="ts">
     import { createEventDispatcher, onMount, onDestroy } from 'svelte';
     import { isCartOpen } from '$lib/stores/cart';
 
     const dispatch = createEventDispatcher();
+
     export let isOpen = false;
     export let onClose = () => {};
 
@@ -15,12 +15,12 @@
     let isDragging = false;
     let movedDistance = 0;
 
-    const DRAG_THRESHOLD = 10; // Distância mínima para considerar como drag
-    const CLOSE_THRESHOLD = 100; // Distância para acionar fechamento
+    const DRAG_THRESHOLD = 10; // Minimum distance to consider a drag
+    const CLOSE_THRESHOLD = 100; // Distance to trigger close action
 
     const closeBottomSheet = () => {
         document.body.classList.remove('no-scroll');
-        dispatch('close'); // Notifica o componente pai
+        isOpen = false;
         onClose();
     };
 
@@ -32,7 +32,6 @@
     };
 
     function handleTouchStart(event: TouchEvent) {
-        event.stopPropagation(); // Impede propagação para outros elementos
         initialY = event.touches[0].clientY;
         lastY = initialY;
         lastTime = Date.now();
@@ -40,13 +39,12 @@
         movedDistance = 0;
         velocity = 0;
 
-        if (bottomSheet) bottomSheet.style.transition = ''; // Remove transição durante o drag
+        if (bottomSheet) {
+            bottomSheet.style.transition = ''; // Remove transition during drag
+        }
     }
 
     function handleTouchMove(event: TouchEvent) {
-        event.preventDefault(); // Evita comportamento padrão, como rolagem
-        event.stopPropagation(); // Impede propagação para outros elementos
-
         if (!isDragging || !bottomSheet) return;
 
         const currentY = event.touches[0].clientY;
@@ -56,23 +54,21 @@
         if (deltaY > 0) {
             bottomSheet.style.transform = `translateY(${deltaY}px)`;
 
-            // Calcula a velocidade
+            // Calculate velocity
             const now = Date.now();
-            const deltaTime = now - lastTime || 1; // Evita divisão por zero
+            const deltaTime = now - lastTime; // Time difference
             velocity = (currentY - lastY) / deltaTime;
+
             lastY = currentY;
-            lastTime = now;
+            lastTime = now; // Update last time
         }
     }
 
-    function handleTouchEnd(event: TouchEvent) {
-        event.stopPropagation(); // Impede propagação para outros elementos
-
+    function handleTouchEnd() {
         if (!isDragging || !bottomSheet) return;
 
         isDragging = false;
-        const transform = bottomSheet.style.transform || 'translateY(0px)';
-        const currentY = parseFloat(transform.replace('translateY(', '').replace('px)', '')) || 0;
+        const currentY = parseFloat(bottomSheet.style.transform.replace('translateY(', '').replace('px)', '')) || 0;
 
         if (currentY > CLOSE_THRESHOLD || velocity > 0.5) {
             closeBottomSheet();
@@ -81,18 +77,16 @@
         }
     }
 
-    let unsubscribe: () => void;
-
     onMount(() => {
         if (isOpen) document.body.classList.add('no-scroll');
-        unsubscribe = isCartOpen.subscribe((value) => {
-            if (!value) closeBottomSheet();
-        });
     });
 
     onDestroy(() => {
-        if (unsubscribe) unsubscribe();
         document.body.classList.remove('no-scroll');
+    });
+
+    isCartOpen.subscribe((value) => {
+        if (!value) closeBottomSheet();
     });
 </script>
 
@@ -140,12 +134,11 @@
 
     .drag-handle {
         width: 60px;
-        height: 6px;
+        height: 4px;
         background-color: #D97A07;
-        border-radius: 3px;
+        border-radius: 2px;
         margin: 0 auto 10px auto;
         cursor: grab;
-        touch-action: none; /* Garante que toques não sejam interpretados como rolagem */
     }
 
     @media (max-width: 768px) {
@@ -154,3 +147,5 @@
         }
     }
 </style>
+
+

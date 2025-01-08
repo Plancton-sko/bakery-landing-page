@@ -99,9 +99,10 @@
   /* Product Grid Styles */
   .product-grid {
     display: grid;
-    gap: 20px;
+    gap: 15px;
     margin-top: 20px;
     width: 100%;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   }
 
   /* Button Styles */
@@ -137,6 +138,13 @@
 
     #our-products h2 {
       font-size: 28px;
+    }
+  }
+
+  @media (max-width: 430px) {
+    .product-grid {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8px;
     }
   }
 

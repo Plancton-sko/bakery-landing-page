@@ -29,6 +29,7 @@
   --box-shadow-small: 0 4px 8px rgba(0, 0, 0, 0.1); 
   --box-shadow-medium: 0 4px 12px rgba(0, 0, 0, 0.1); 
   --box-shadow-intense: 0px 8px 24px rgba(0, 0, 0, 0.1); 
+  --text-shadow: 2px 2px 12px rgba(0, 0, 0, 0.5);
 
   /* Espaçamentos */
   --spacing-xs: 4px;

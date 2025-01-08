@@ -38,16 +38,24 @@
 
     <div class="overlay"></div>
 
-    <!-- Textos específicos de cada slide -->
-    {#each slides as { title, description }, index}
-      {#if index === $currentSlideIndex}
-        <div class="slide-text">
-          <h1>{title}</h1>
-          <p>{description}</p>
-        </div>
-      {/if}
-    {/each}
-
+     <!-- Slide Text -->
+     {#each slides as { title, description }, index}
+       {#if index === $currentSlideIndex}
+         <div class="slide-text">
+           <h1>{title}</h1>
+           <p>{description}</p>
+         </div>
+       {/if}
+     {/each}
+   
+     <!-- Slide CTA -->
+     {#each slides as { ctaText, ctaButton }, index}
+       {#if index === $currentSlideIndex}
+         <div class="slide-cta">
+           <button on:click={() => (window.location.href = ctaButton)}>{ctaText}</button>
+         </div>
+       {/if}
+     {/each}
     <!-- Áreas clicáveis para navegação -->
     <div class="click-area left" on:click={previousSlide}></div>
     <div class="click-area right" on:click={nextSlide}></div>
@@ -110,8 +118,8 @@
       left: 50%;
       transform: translate(-50%, -50%);
       z-index: 2;
-      color: #fff;
-      text-shadow: 2px 2px 12px rgba(0, 0, 0, 0.5); /* Aumenta o contraste do texto */
+      color: var(--white-text);
+      text-shadow: var(--text-shadow); /* Aumenta o contraste do texto */
       text-align: center;
       max-width: 80%;
       line-height: 1.5;
@@ -131,16 +139,40 @@
       opacity: 0.9;
     }
 
-    /* Overlay para escurecer a imagem e melhorar a leitura do texto */
-    .overlay {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0, 0, 0, 0.3);
-      z-index: 1;
-    }
+    .slide-cta {
+    position: absolute;
+    bottom: 30px;
+    right: 30px;
+    z-index: 4; /* Above the image */
+  }
+
+  .slide-cta button {
+    background-color: var(--highlight-color);
+    color: var(--white-text);
+    padding: 10px 20px;
+    font-size: 1rem;
+    font-weight: bold;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+
+  .slide-cta button:hover {
+    background-color: #ff3b3b;
+  } 
+
+  /* Overlay for image darkening */
+  .overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.3); /* Slightly darkened overlay */
+    z-index: 2; /* Below text but above the image */
+  }
+
 
     /* Áreas clicáveis para navegar entre slides */
     .click-area {

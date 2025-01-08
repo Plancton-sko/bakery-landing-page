@@ -96,6 +96,7 @@
   .product-card {
     display: flex;
     flex-direction: column;
+    gap: 8px;
     align-items: center;
     border: 1px solid #ccc;
     padding: var(--spacing-md);
@@ -104,6 +105,7 @@
     transition: box-shadow 0.3s ease, transform 0.2s ease;
     cursor: pointer;
     width: 100%;
+    height: 100%;
   }
 
   .product-card:hover {
@@ -122,7 +124,7 @@
 
   .product-card h3 {
     font-family: var(--font-primary);
-    font-size: 20px;
+    font-size: clamp(16px, 4vw, 20px);
     font-weight: bold;
     color: var(--primary-color);
     margin: 16px 0 8px;
@@ -131,7 +133,7 @@
 
   .product-card p {
     font-family: var(--font-primary);
-    font-size: 16px;
+    font-size: clamp(14px, 3.5vw, 16px);
     color: var(--light-text);
     text-align: center;
   }
@@ -143,6 +145,8 @@
     padding: var(--spacing-lg);
     border-radius: var(--border-radius);
     font-family: var(--font-primary);
+    max-width: 600px;
+    margin: auto;
   }
 
   .bottomSheet-content {
@@ -204,4 +208,5 @@
     background-color: var(--button-background-hover);
     transform: scale(1.05);
   }
+
   </style>
