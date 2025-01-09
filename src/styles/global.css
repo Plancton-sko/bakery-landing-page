@@ -53,3 +53,13 @@
   --button-padding-small: 10px 15px;
   --input-padding: 12px; /* Padrão para inputs */
 }
+
+*, *::before, *::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+}

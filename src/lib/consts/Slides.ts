@@ -1,12 +1,5 @@
 // src/lib/const/Slide.ts
-interface Slide {
-    src: string;
-    alt: string;
-    title: string;
-    description: string;
-    ctaButton: string;
-    ctaText: string;
-  }
+import type { Slide } from "$lib/types/Slides";
 
   
 export const slides: Slide[] = [

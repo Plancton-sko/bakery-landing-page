@@ -32,15 +32,20 @@
     };
 
     function handleTouchStart(event: TouchEvent) {
-        event.stopPropagation(); // Impede propagação para outros elementos
-        initialY = event.touches[0].clientY;
-        lastY = initialY;
-        lastTime = Date.now();
-        isDragging = true;
-        movedDistance = 0;
-        velocity = 0;
+    // Evita que o evento toque propague para outros elementos
+    event.stopPropagation();
 
-        if (bottomSheet) bottomSheet.style.transition = ''; // Remove transição durante o drag
+    // Captura as variáveis necessárias diretamente
+    const touch = event.touches[0];
+
+    // Inicializa variáveis de controle
+    initialY = lastY = touch.clientY;
+    lastTime = Date.now();
+    isDragging = true;
+    movedDistance = velocity = 0;
+
+    // Remove a transição do estilo para evitar atrasos na movimentação
+    bottomSheet?.style.setProperty('transition', 'none');
     }
 
     function handleTouchMove(event: TouchEvent) {
