@@ -131,7 +131,7 @@
         bottom: 0;
         left: 0;
         right: 0;
-        background: #FFECD1;
+        background: var(--background-color);
         padding: 20px;
         border-top-left-radius: 16px;
         border-top-right-radius: 16px;
@@ -146,7 +146,7 @@
     .drag-handle {
         width: 60px;
         height: 6px;
-        background-color: #D97A07;
+        background-color: var(--second-button-color);
         border-radius: 3px;
         margin: 0 auto 10px auto;
         cursor: grab;

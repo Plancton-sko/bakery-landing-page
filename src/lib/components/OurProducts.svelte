@@ -99,7 +99,7 @@
   /* Product Grid Styles */
   .product-grid {
     display: grid;
-    gap: 15px;
+    gap: var(--spacing-md);
     margin-top: 20px;
     width: 100%;
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
