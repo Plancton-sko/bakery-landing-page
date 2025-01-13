@@ -121,7 +121,7 @@
     display: flex;
     align-items: center;
     background-color: #eed16a;
-    color: var(--white-text);
+    color: black;
     padding: 8px 16px;
     border-radius: 30px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
