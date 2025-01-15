@@ -42,7 +42,7 @@
   on:click={openModal}
   type="button"
 >
-  <img src={product.image} alt={product.name} loading="lazy"/>
+  <img src="{product.image}" alt={product.name} loading="lazy"/>
   <h3>{product.name}</h3>
   <p>{formatPrice(product.price)}</p>
 </button>
@@ -53,9 +53,8 @@
       <div class="bottomSheet-content">
           <h2>{product.name}</h2>
           <p>{product.description}</p>
-          <img src={product.image} alt={product.name} class="imgBottomSheet" loading="lazy" />
+          <img src="{product.image}" alt={product.name} class="imgBottomSheet"/>
           <p>{formatPrice(product.price)}</p>
-
           <label for="quantity">Quantity:</label>
           <input
               type="number"
@@ -160,8 +159,8 @@
   
 
   .imgBottomSheet {
-    max-width: 500px;
-    max-height: 350px;
+    max-width: 400px;
+    max-height: 400px;
     border-radius: var(--border-radius-medium);
     box-shadow: var(--box-shadow-medium);
     margin-bottom: 20px;

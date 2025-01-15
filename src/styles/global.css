@@ -7,6 +7,7 @@
   --background-color: #FDF4E3; 
   --button-background: #ebb916;  
   --button-background-hover: #d6a514; 
+  --background-highlight: #d79a3b
   --light-background: #FFF7E6; 
   --dark-overlay: rgba(0, 0, 0, 0.3); 
   --second-button-color: #D97A07
@@ -31,6 +32,7 @@
   --box-shadow-medium: 0 4px 12px rgba(0, 0, 0, 0.1); 
   --box-shadow-intense: 0px 8px 24px rgba(0, 0, 0, 0.1); 
   --text-shadow: 2px 2px 12px rgba(0, 0, 0, 0.5);
+  --overlay-dark: rgba(0, 0, 0, 0.3);
 
   /* Espaçamentos */
   --spacing-xs: 4px;
@@ -42,6 +44,7 @@
   /* Fontes */
   --font-primary: 'Roboto', sans-serif;
   --font-secondary: 'Playfair Display', serif;
+  --font-tertiary: 'Poppins', sans-serif;
 
   /* Bordas */
   --border-radius: 12px;

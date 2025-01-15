@@ -1,4 +1,3 @@
-<!-- src/lib/components/HeroSlider.svelte -->
 <script lang="ts">
   import { onMount } from "svelte";
   import { writable, type Writable } from "svelte/store";
@@ -29,35 +28,33 @@
 </script>
 
 <section id="hero">
-  <!-- Cada slide -->
-  {#each slides as { src, alt, title, description }, index}
-    <picture class="slide" class:active={index === $currentSlideIndex}>
-      <img {src} {alt} loading="lazy" />
-    </picture>
+  {#each slides as { src, alt, title, description, ctaText, ctaButton }, index}
+    <div class="slide {index === $currentSlideIndex ? 'active' : ''}">
+      <picture>
+        <img data-enhanced
+             src="{src}?w=1920"
+             alt="{alt}"
+             loading="lazy"
+        />
+      </picture>
+
+      <div class="overlay"></div>
+
+      {#if index === $currentSlideIndex}
+        <div class="slide-content">
+          <h1>{title}</h1>
+          <p>{description}</p>
+          <button class="cta-button" on:click={() => (window.location.href = ctaButton)}>
+            {ctaText}
+          </button>
+        </div>
+      {/if}
+    </div>
   {/each}
 
-  <div class="overlay"></div>
-
-  <!-- Slide Text -->
-  {#each slides as { title, description, ctaText, ctaButton }, index}
-    {#if index === $currentSlideIndex}
-      <div class="slide-text">
-        <h1>{title}</h1>
-        <p>{description}</p>
-      </div>
-      <div class="slide-cta">
-        <button on:click={() => (window.location.href = ctaButton)}>          
-          {ctaText}
-        </button>
-      </div>
-    {/if}
-  {/each}
-
-  <!-- Áreas clicáveis para navegação -->
   <div class="click-area left" on:click={previousSlide}></div>
   <div class="click-area right" on:click={nextSlide}></div>
 
-  <!-- Controles para selecionar slides específicos -->
   <div class="controls">
     {#each slides as _, index}
       <button
@@ -70,21 +67,18 @@
   </div>
 </section>
 
-<!--add an buttom that direct the user to our products-->
-
 <style>
-  /* Estilos gerais para o hero slider */
+
   #hero {
     position: relative;
     height: 800px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
     overflow: hidden;
-    background-color: #f8f8f8; /* Adiciona um fundo padrão */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #f7f0e5;
   }
 
-  /* Cada slide ocupa toda a área do hero */
   .slide {
     position: absolute;
     top: 0;
@@ -95,84 +89,67 @@
     transition: opacity 1s ease-in-out;
   }
 
-  /* Slide ativo visível */
   .slide.active {
     opacity: 1;
   }
 
-  /* Imagem dentro de cada slide */
-  #hero img {
+  .slide img {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    filter: brightness(
-      0.8
-    ); /* Escurece ligeiramente as imagens para melhor legibilidade do texto */
+    filter: brightness(0.8);
   }
 
-  /* Texto específico de cada slide */
-  .slide-text {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    z-index: 2;
-    color: var(--white-text);
-    text-shadow: var(--text-shadow); /* Aumenta o contraste do texto */
-    text-align: center;
-    max-width: 80%;
-    line-height: 1.5;
-  }
-
-  .slide-text h1 {
-    font-size: 3rem;
-    font-weight: bold;
-    margin-bottom: 15px;
-    letter-spacing: 1px; /* Adiciona espaço entre letras para uma leitura mais clara */
-  }
-
-  .slide-text p {
-    font-size: 1.5rem;
-    margin: 0 auto;
-    max-width: 80%;
-    opacity: 0.9;
-  }
-
-  .slide-cta {
-    position: absolute;
-    bottom: 30px;
-    right: 30px;
-    z-index: 4; /* Above the image */
-  }
-
-  .slide-cta button {
-    background-color: var(--highlight-color);
-    color: var(--white-text);
-    padding: 10px 20px;
-    font-size: 1rem;
-    font-weight: bold;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-  }
-
-  .slide-cta button:hover {
-    background-color: #ff3b3b;
-  }
-
-  /* Overlay for image darkening */
   .overlay {
     position: absolute;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0, 0, 0, 0.3); /* Slightly darkened overlay */
-    z-index: 2; /* Below text but above the image */
+    background: var(--overlay-dark);
+    z-index: 1;
   }
 
-  /* Áreas clicáveis para navegar entre slides */
+  .slide-content {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 2;
+    text-align: center;
+    color: var(--white-text);
+    font-family: var( --font-tertiary);
+    max-width: 80%;
+  }
+
+  .slide-content h1 {
+    font-size: 3rem;
+    margin-bottom: 15px;
+    font-weight: bold;
+  }
+
+  .slide-content p {
+    font-size: 1.2rem;
+    margin-bottom: 20px;
+  }
+
+  .cta-button {
+    background-color: var(--button-background);
+    color: var(--white-text);
+    border: none;
+    padding: 15px 30px;
+    font-size: 1rem;
+    font-weight: bold;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    box-shadow: var( --box-shadow);
+  }
+
+  .cta-button:hover {
+    background-color: var(--button-background-hover);
+  }
+
   .click-area {
     position: absolute;
     top: 0;
@@ -190,48 +167,26 @@
     right: 0;
   }
 
-  /* Controles do slider (botões) */
   .controls {
     position: absolute;
-    bottom: 25px;
+    bottom: 20px;
     left: 50%;
     transform: translateX(-50%);
     display: flex;
-    gap: 12px;
-    z-index: 4;
+    gap: 10px;
   }
 
   .controls button {
     width: 12px;
     height: 12px;
-    border-radius: 50%;
-    border: none;
     background: rgba(255, 255, 255, 0.6);
-    transition:
-      background 0.3s,
-      transform 0.3s;
+    border: none;
+    border-radius: 50%;
     cursor: pointer;
   }
 
-  .controls button.active,
-  .controls button:hover {
-    background: rgba(255, 255, 255, 0.9);
-    transform: scale(1.2);
-  }
-
-  /* Estilização da responsividade */
-  @media (max-width: 1320px) {
-    #hero {
-      height: 550px;
-    }
-
-    .slide-text h1 {
-      font-size: 2.5rem;
-    }
-
-    .slide-text p {
-      font-size: 1.2rem;
-    }
+  .controls button.active {
+    background: rgba(255, 255, 255, 1);
   }
 
   @media (max-width: 768px) {
@@ -239,65 +194,35 @@
       height: 500px;
     }
 
-    .slide-text {
-      max-width: 90%;
-    }
-
-    .slide-text h1 {
+    .slide-content h1 {
       font-size: 2rem;
     }
 
-    .slide-text p {
+    .slide-content p {
       font-size: 1rem;
     }
   }
 
   @media (max-width: 480px) {
     #hero {
-      height: 450px;
+      height: 400px;
     }
 
-    .slide-text {
-      max-width: 100%;
-      padding: 0 20px;
+    .slide-content {
+      max-width: 90%;
     }
 
-    .slide-text h1 {
-      font-size: 1.8rem;
+    .slide-content h1 {
+      font-size: 1.5rem;
     }
 
-    .slide-text p {
+    .slide-content p {
       font-size: 0.9rem;
     }
 
-    .controls button {
-      width: 10px;
-      height: 10px;
-    }
-  }
-
-  @media (max-width: 479px) {
-    #hero {
-      height: 350px;
-      width: 100%;
-    }
-
-    .slide-text {
-      max-width: 100%;
-      padding: 0 20px;
-    }
-
-    .slide-text h1 {
-      font-size: 1.8rem;
-    }
-
-    .slide-text p {
+    .cta-button {
       font-size: 0.9rem;
-    }
-
-    .controls button {
-      width: 10px;
-      height: 10px;
+      padding: 10px 20px;
     }
   }
 </style>

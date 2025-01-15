@@ -146,7 +146,6 @@
     .drag-handle {
         width: 60px;
         height: 6px;
-        background-color: var(--second-button-color);
         border-radius: 3px;
         margin: 0 auto 10px auto;
         cursor: grab;

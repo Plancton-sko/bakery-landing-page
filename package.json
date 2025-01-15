@@ -22,6 +22,8 @@
 	},
 	"type": "module",
 	"dependencies": {
+		"@sveltejs/enhanced-img": "^0.3.10",
+		"dexie": "^4.0.10",
 		"idb": "^8.0.1",
 		"uuid": "^10.0.0"
 	}
