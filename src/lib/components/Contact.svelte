@@ -1,26 +1,41 @@
-<!--src/lib/components/Contact.svelte-->
 <script lang="ts">
-  import { contacts } from "$lib/stores/contacts";
-  import { v4 as uuidv4 } from "uuid"; // Para gerar IDs únicos
   import { onMount } from "svelte";
 
   let email = "";
   let subject = "";
   let message = "";
 
-  function handleSubmit(e: Event) {
+  async function handleSubmit(e: Event) {
     e.preventDefault();
 
     const newContact = {
-      id: uuidv4(),
       email,
       subject,
       message,
     };
 
-    contacts.addLocalContact(newContact); // Adicionar localmente
-    // Para adicionar na API, você poderia usar: contacts.addContact(newContact);
-    resetForm();
+    try {
+      const response = await fetch('/api/contact', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(newContact),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        alert(`Erro: ${errorData.error}`);
+        return;
+      }
+
+      const responseData = await response.json();
+      alert('Contato salvo com sucesso!');
+      resetForm();
+    } catch (error) {
+      console.error('Erro ao enviar contato:', error);
+      alert('Erro ao salvar o contato.');
+    }
   }
 
   function resetForm() {

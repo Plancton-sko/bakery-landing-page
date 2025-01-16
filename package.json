@@ -23,8 +23,11 @@
 	"type": "module",
 	"dependencies": {
 		"@sveltejs/enhanced-img": "^0.3.10",
+		"db": "^6.0.3",
 		"dexie": "^4.0.10",
+		"firebase": "^11.1.0",
 		"idb": "^8.0.1",
+		"idb-keyval": "^6.2.1",
 		"uuid": "^10.0.0"
 	}
 }
