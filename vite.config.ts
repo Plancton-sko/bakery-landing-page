@@ -14,5 +14,8 @@ export default defineConfig({
 			additionalData: `@import 'src/styles/global.css';`
 		  }
 		}
-	  }
+	  },
+	ssr: {
+        noExternal: ['idb-keyval'],
+    },
 });

@@ -1,4 +1,164 @@
 /* src/style/global.css */
+/* /src/styles/global.css */
+/* Basic Reset */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  /* VERY IMPORTANT FOR MANTAINING RELIABLE SIZING */
+}
+
+h1,
+h2,
+h3,
+p,
+a,
+button,
+span,
+label,
+input,
+option {
+  user-select: none;
+}
+
+
+
+button::-moz-focus-inner,
+input::-moz-focus-inner {
+  border: 0;
+}
+
+a,
+a:focus,
+a:focus-visible,
+a:active,
+img,
+img:focus,
+img:focus-visible,
+img:active,
+label,
+label:focus,
+label:focus-visible,
+label:active,
+div.header-image,
+div.header-image:focus,
+div.header-image:focus-visible,
+div.header-image:active,
+div.logo,
+div.logo:focus,
+div.logo:focus-visible,
+div.logo:active,
+div.text-controls input,
+div.text-controls input:focus,
+div.text-controls input:focus-visible,
+div.text-controls input:active,
+div.text-controls span,
+div.text-controls span:focus,
+div.text-controls span:focus-visible,
+div.text-controls span:active,
+button,
+button:focus,
+button:focus-visible,
+button:active {
+  outline: none;
+  box-shadow: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  -webkit-tap-highlight-color: transparent;
+  /* IMPORTANT FOR REMOVING TAP HIGHLIGHT */
+}
+
+
+img {
+  -webkit-user-drag: none;
+  /* Safari e Chrome */
+  -khtml-user-drag: none;
+  /* Safari */
+  -moz-user-drag: none;
+  /* Firefox */
+  -o-user-drag: none;
+  /* Opera */
+  user-drag: none;
+  /* No drag */
+  user-select: none;
+  /* No select */
+}
+
+select {
+  -webkit-user-drag: none;
+  /* Safari e Chrome */
+  -khtml-user-drag: none;
+  /* Safari */
+  -moz-user-drag: none;
+  /* Firefox */
+  -o-user-drag: none;
+  /* Opera */
+  user-drag: none;
+  /* No drag */
+  user-select: none;
+  /* No select */
+}
+
+input {
+  -webkit-user-drag: none;
+  /* Safari e Chrome */
+  -khtml-user-drag: none;
+  /* Safari */
+  -moz-user-drag: none;
+  /* Firefox */
+  -o-user-drag: none;
+  /* Opera */
+  user-drag: none;
+  /* No drag */
+}
+
+select,
+input {
+  -webkit-appearance: none;
+  /* Safari & Chrome */
+  -moz-appearance: none;
+  /* Firefox */
+  appearance: none;
+  padding: 0.5em;
+  border-radius: 0.25em;
+  font-size: 1em;
+  color: #333;
+}
+
+select::-ms-expand,
+input::-ms-expand {
+  display: none;
+  /* IE10 & IE11 */
+}
+
+input,
+button,
+textarea,
+select {
+  font-family: inherit;
+  font-size: inherit;
+  color: inherit;
+  padding: 0;
+  margin: 0;
+  box-shadow: none;
+}
+
+button {
+  cursor: pointer;
+}
+
+textarea {
+  resize: none;
+}
+
+*, *::before, *::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+
 :root {
   /* Cores principais */
   --primary-color: #6B4226; 
@@ -58,12 +218,3 @@
   --input-padding: 12px; /* Padrão para inputs */
 }
 
-*, *::before, *::after {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
-body {
-  margin: 0;
-}
