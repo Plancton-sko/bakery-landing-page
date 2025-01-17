@@ -17,7 +17,7 @@ COPY . .
 RUN npm run build
 
 # Exponha a porta que será usada pelo servidor
-EXPOSE 5173
+EXPOSE 3000
 
 # Comando para rodar a aplicação em produção
 CMD ["npm", "run", "preview"]
