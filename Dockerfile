@@ -1,25 +1,40 @@
-# Use a imagem base do Node.js
-FROM node:20-alpine
+# Etapa de build
+FROM node:20-alpine AS build
 
-# Defina o diretório de trabalho dentro do container
 WORKDIR /app
 
-# Copie os arquivos de configuração e dependências para o container
+# Copiar arquivos necessários para instalar dependências
 COPY package.json package-lock.json ./
 
-# Instale as dependências
+# Instalar dependências
 RUN npm install
 
-ENV NODE_ENV=PRODUCTION
-
-# Copie o restante dos arquivos da aplicação
+# Copiar todo o código fonte
 COPY . .
 
-# Construa a aplicação para produção
+# Construir o projeto
 RUN npm run build
 
-# Exponha a porta que será usada pelo servidor
+# Etapa final
+FROM node:20-alpine
+
+WORKDIR /app
+
+# Copiar arquivos do build
+COPY --from=build /app/build ./
+
+# Copiar arquivos necessários para dependências de produção
+COPY --from=build /app/package.json ./
+COPY --from=build /app/package-lock.json ./
+
+# Instalar dependências de produção
+RUN npm install --omit=dev
+
+# Definir o ambiente como produção
+ENV NODE_ENV=production
+
+# Expor a porta do servidor
 EXPOSE 3000
 
-# Comando para rodar a aplicação em produção
-CMD ["npm", "run", "preview"]
+# Iniciar o servidor
+CMD ["node", "index.js"]
