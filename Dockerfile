@@ -1,5 +1,5 @@
 # Use a imagem base do Node.js
-FROM node:18-alpine
+FROM node:20-alpine
 
 # Defina o diretório de trabalho dentro do container
 WORKDIR /app
@@ -9,6 +9,8 @@ COPY package.json package-lock.json ./
 
 # Instale as dependências
 RUN npm install
+
+ENV NODE_ENV=PRODUCTION
 
 # Copie o restante dos arquivos da aplicação
 COPY . .
