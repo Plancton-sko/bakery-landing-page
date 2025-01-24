@@ -113,7 +113,7 @@ export const decreaseQuantity = (productId: string): void => {
         item.product.id === productId
           ? { ...item, quantity: item.quantity - 1 }
           : item
-      )
+      ) 
       .filter((item) => item.quantity > 0);
     saveCartToDB(updatedCart);
     return updatedCart;
