@@ -1,3 +1,4 @@
+<!--src/lib/components/HeroSlider.svelte-->
 <script lang="ts">
   import { onMount } from "svelte";
   import { writable, type Writable } from "svelte/store";
@@ -30,13 +31,11 @@
 <section id="hero">
   {#each slides as { src, alt, title, description, ctaText, ctaButton }, index}
     <div class="slide {index === $currentSlideIndex ? 'active' : ''}">
-      <picture>
-        <img data-enhanced
-             src="{src}?w=1920"
-             alt="{alt}"
-             loading="lazy"
-        />
-      </picture>
+        <picture>
+          <source srcset="{src}?w=480&format=webp" media="(max-width: 480px)" type="image/webp">
+          <source srcset="{src}?w=1024&format=webp" media="(max-width: 1024px)" type="image/webp">
+          <img src="{src}?w=1920&format=webp" alt="{alt}" loading="lazy" decoding="async">
+        </picture>
 
       <div class="overlay"></div>
 

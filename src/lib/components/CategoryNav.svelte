@@ -1,3 +1,4 @@
+<!-- src/lib/components/CategoryNav.svelte -->
 <script lang="ts">
   import { createEventDispatcher } from "svelte";
   import { Categories } from "$lib/enums/Categories";

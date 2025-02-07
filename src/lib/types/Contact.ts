@@ -1,3 +1,4 @@
+// src/lib/types/Contact.ts
 import type { Writable } from "svelte/store";
 
 export type Contact = {

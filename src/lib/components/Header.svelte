@@ -1,3 +1,4 @@
+<!--src/lib/components.Headers.svelte-->
 <script lang="ts">
   import { cart } from "$lib/stores/cart";
   import { get } from 'svelte/store';

@@ -1,3 +1,4 @@
+// src/lib/stores/highlights.ts
 import type { Highlight } from '$lib/types/Highlight';
 
 export const highlights: Highlight[] = [

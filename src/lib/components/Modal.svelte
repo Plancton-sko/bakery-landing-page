@@ -1,3 +1,4 @@
+<!--src/lib/components/Modal.svelte-->
 <script lang="ts">
   export let isOpen: boolean;
   export let onClose: () => void;

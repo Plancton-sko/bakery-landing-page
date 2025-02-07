@@ -1,3 +1,4 @@
+<!-- src/lib/components/Contact.svelte -->
 <script lang="ts">
   import { onMount } from "svelte";
 

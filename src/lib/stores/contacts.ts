@@ -1,3 +1,4 @@
+// src/lib/stores/contacts.ts
 import type { Contact, ContactStore } from '$lib/types/Contact';
 import { writable, type Writable } from 'svelte/store';
 
