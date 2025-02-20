@@ -2,100 +2,97 @@
 <script lang="ts">
   import { cart, clearCart, removeFromCart, increaseQuantity, decreaseQuantity, totalPrice } from "$lib/stores/cart";
   import { get } from 'svelte/store';
+  import { formatPrice } from "$lib/utils/format";
 
   export let closeCartModal: () => void;
 
-  // Inicialize com os itens do carrinho
   let cartItems = get(cart);
-
-  // Variáveis para o formulário do usuário
   let showUserForm = false;
   let userName = "";
   let userAddress = "";
   let userEmail = "";
 
-  // Atualize `cartItems` sempre que o carrinho mudar
+  // Atualiza quando o carrinho muda
   cart.subscribe(items => {
     cartItems = items;
   });
 
-  // Verifica se o formulário do usuário está preenchido corretamente
   const isFormValid = () => {
     return userName && userAddress && userEmail;
   };
 
-  // Exibe o formulário para finalizar a compra
   const displayForm = () => {
     showUserForm = true;
   };
 
-  // Função para finalizar a compra
   const checkout = () => {
-  if (cartItems.length === 0) {
-    alert("O carrinho está vazio. Adicione itens antes de finalizar a compra.");
-    return;
-  }
-
-  if (!isFormValid()) {
-    alert("Por favor, preencha todos os campos.");
-    return;
-  }
-
-  // Formate a mensagem para o WhatsApp com os itens do carrinho
-  const productList = cartItems
-    .map(item => 
-      `${item.quantity}x ${item.product.name} - ${new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(item.product.price * item.quantity)}`
-    ).join("\n");
-
-  const message = `Olá, meu nome é ${userName}.
-  Eu gostaria de finalizar a compra dos seguintes produtos:
-  ${productList}
-  Total: ${new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format($totalPrice)}
-  Meu endereço: ${userAddress}
-  Meu email: ${userEmail}`;
-
-  // URL para redirecionar o usuário ao WhatsApp
-  const whatsappURL = `https://wa.me/5511999999999?text=${encodeURIComponent(message)}`;
-  window.location.href = whatsappURL;
-
-  // Limpe o carrinho e feche o modal após a compra
-  clearCart();
-  closeCartModal();
-};
-
-  // Atualiza o total e impede a finalização se o carrinho estiver vazio
-  const updateTotalAndCheckCart = () => {
-    cartItems = get(cart); // Atualiza `cartItems` com o conteúdo atual do carrinho
     if (cartItems.length === 0) {
-      showUserForm = false; // Esconde o formulário se o carrinho estiver vazio
+      alert("O carrinho está vazio!");
+      return;
     }
-  };
 
-  // Chama `updateTotalAndCheckCart` quando o carrinho muda
-  cart.subscribe(updateTotalAndCheckCart);
+    if (!isFormValid()) {
+      alert("Preencha todos os campos!");
+      return;
+    }
+
+    const productList = cartItems
+      .map(item => {
+        const price = item.appliedDiscount?.finalPrice || item.product.price;
+        return `${item.quantity}x ${item.product.name} - ${formatPrice(price * item.quantity)}`;
+      })
+      .join("\n");
+
+    const total = cartItems.reduce((acc, item) => {
+      const price = item.appliedDiscount?.finalPrice || item.product.price;
+      return acc + (price * item.quantity);
+    }, 0);
+
+    const message = `Pedido de ${userName}
+Endereço: ${userAddress}
+Email: ${userEmail}
+
+Itens:
+${productList}
+
+Total: ${formatPrice(total)}`;
+
+    window.location.href = `https://wa.me/5511999999999?text=${encodeURIComponent(message)}`;
+    clearCart();
+    closeCartModal();
+  };
 </script>
 
-<!-- Modal -->
 <div class="modal-overlay" on:click={closeCartModal}>
   <div class="modal-content" on:click|stopPropagation>
-    <h2>Finalizar Compra</h2>
+    <h2>Seu Carrinho</h2>
 
     <ul>
       {#if cartItems.length === 0}
-        <li>O carrinho está vazio.</li>
+        <li class="empty-cart">Seu carrinho está vazio</li>
       {:else}
         {#each cartItems as item}
           <li>
-            <span class="item-name">{item.product.name}</span>
-            <span class="item-price">{new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(item.product.price)} x {item.quantity}</span>
+            <div class="item-info">
+              <span class="item-name">{item.product.name}</span>
+              {#if item.appliedDiscount}
+                <div class="discount-info">
+                  <span class="original">{formatPrice(item.appliedDiscount.originalPrice)}</span>
+                  <span class="final">{formatPrice(item.appliedDiscount.finalPrice)}</span>
+                </div>
+              {:else}
+                <span class="price">{formatPrice(item.product.price)}</span>
+              {/if}
+            </div>
+            
             <div class="item-actions">
-              <button class="quantity-btn" on:click={() => increaseQuantity(item.product.id)}>+</button>
-              <button class="quantity-btn" on:click={() => decreaseQuantity(item.product.id)}>-</button>
-              <button class="remove-btn" on:click={() => { 
-                removeFromCart(item.product.id);
-                updateTotalAndCheckCart(); // Chama para atualizar total após a remoção
-              }}>
-                🗑️ <!-- Ícone de lixeira -->
+              <div class="quantity-controls">
+                <button on:click={() => decreaseQuantity(item.product.id)}>-</button>
+                <span>{item.quantity}</span>
+                <button on:click={() => increaseQuantity(item.product.id)}>+</button>
+              </div>
+              <button class="remove-btn" on:click={() => removeFromCart(item.product.id)}>
+                🗑️
               </button>
             </div>
           </li>
@@ -103,39 +100,70 @@
       {/if}
     </ul>
 
-    <p>Total: {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format($totalPrice)}</p>
-
-    {#if !showUserForm && cartItems.length > 0}
-      <button class="checkout-btn" on:click={displayForm}>Checkout</button>
-    {/if}
+    <div class="total-section">
+      <h3>Total: {formatPrice($totalPrice)}</h3>
+      {#if cartItems.length > 0 && !showUserForm}
+        <button class="checkout-btn" on:click={displayForm}>Finalizar Compra</button>
+      {/if}
+    </div>
 
     {#if showUserForm}
       <form on:submit|preventDefault={checkout} class="user-form">
         <div class="form-group">
           <label for="name">Nome Completo</label>
-          <input type="text" id="name" bind:value={userName} placeholder="Seu nome completo" required />
+          <input type="text" id="name" bind:value={userName} required />
         </div>
 
         <div class="form-group">
           <label for="address">Endereço</label>
-          <input type="text" id="address" bind:value={userAddress} placeholder="Seu endereço completo" required />
+          <input type="text" id="address" bind:value={userAddress} required />
         </div>
 
         <div class="form-group">
           <label for="email">Email</label>
-          <input type="email" id="email" bind:value={userEmail} placeholder="Seu email" required />
+          <input type="email" id="email" bind:value={userEmail} required />
         </div>
 
-        <button class="checkout-btn" type="submit">Confirmar e Enviar Pedido</button>
+        <button class="confirm-btn" type="submit">Confirmar Pedido</button>
       </form>
     {/if}
-    <button class="close-btn" on:click={closeCartModal}>Back</button>
+
+    <button class="close-btn" on:click={closeCartModal}>Voltar</button>
   </div>
 </div>
 
-<!--Salvar os pedidos do cliente por meio do IndexedDB-->
-
 <style>
+  .discount-info {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+  }
+
+  .original {
+    text-decoration: line-through;
+    color: #999;
+    font-size: 0.9rem;
+  }
+
+  .final {
+    color: var(--primary-color);
+    font-weight: bold;
+  }
+
+  .quantity-controls {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .quantity-controls button {
+    padding: 4px 12px;
+    background: var(--third-color);
+    color: white;
+    border: none;
+    border-radius: 4px;
+  }
+
   .modal-overlay {
     position: fixed;
     top: 0;
@@ -181,7 +209,7 @@
     font-family: var(--font-primary);
     font-size: 16px;
     padding: 15px 10px;
-    border-bottom: 1px solid #EAD9C3; /* Sutil separação */
+    border-bottom: 1px solid #ead9c3; /* Sutil separação */
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -213,7 +241,8 @@
     gap: 5px;
   }
 
-  .quantity-btn, .remove-btn {
+  .quantity-btn,
+  .remove-btn {
     background-color: var(--third-color); /* Cor de destaque */
     color: var(--white-text);
     border: none;
@@ -221,7 +250,9 @@
     padding: 5px 12px;
     font-size: 14px;
     cursor: pointer;
-    transition: background-color 0.3s, transform 0.2s;
+    transition:
+      background-color 0.3s,
+      transform 0.2s;
   }
 
   .quantity-btn:hover {
@@ -237,25 +268,29 @@
   .remove-btn:hover {
     background-color: var(--danger-color);
   }
-  .close-btn{
+  .close-btn {
     background-color: #f58e2d;
   }
 
-  .checkout-btn{
+  .checkout-btn {
     background-color: var(--danger-color);
   }
 
-  .checkout-btn, .close-btn {
+  .checkout-btn,
+  .close-btn {
     color: var(--white-text);
     font-size: 16px;
     padding: 12px 20px;
     border: none;
     border-radius: var(--border-radius-small);
     cursor: pointer;
-    transition: background-color 0.3s, transform 0.2s;
+    transition:
+      background-color 0.3s,
+      transform 0.2s;
   }
 
-  .checkout-btn:hover, .close-btn:hover {
+  .checkout-btn:hover,
+  .close-btn:hover {
     background-color: var(--highlight-color);
     transform: scale(1.05);
   }
@@ -283,10 +318,12 @@
   input {
     width: 100%;
     padding: 12px;
-    border: 1px solid #EAD9C3;
+    border: 1px solid #ead9c3;
     border-radius: 8px;
     font-size: 15px;
-    transition: border-color 0.3s, box-shadow 0.3s;
+    transition:
+      border-color 0.3s,
+      box-shadow 0.3s;
   }
 
   input:focus {

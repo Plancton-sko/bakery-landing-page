@@ -1,4 +1,4 @@
-
+// src/lib/enum/Categories.ts
 export enum Categories {
     BREAD = 'bread',
     COFFEE = 'coffee',

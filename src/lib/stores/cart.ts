@@ -2,121 +2,126 @@
 import { writable, derived } from 'svelte/store';
 import { get as getFromDB, set as setInDB, del as deleteFromDB } from 'idb-keyval';
 import type { Product } from '$lib/types/Product';
+import { activeDiscounts } from '$lib/consts/Discounts';
+import { calculateDiscounts } from '$lib/utils/discounts';
+import type { AppliedDiscount } from '$lib/types/Discount';
+import { browser } from '$app/environment';
 
-interface CartItem {
+export interface CartItem {
   product: Product;
   quantity: number;
+  appliedDiscount?: AppliedDiscount;
 }
 
-// Chave usada no IndexedDB
 const CART_DB_KEY = 'cart';
-
-// Store para controlar se o carrinho está aberto
 export const isCartOpen = writable(false);
 
-// Store para o carrinho
+// Store principal do carrinho
 const initialCart: CartItem[] = [];
 export const cart = writable<CartItem[]>(initialCart);
 
-// Store derivada para o preço total
+// Store derivada para preço total considerando descontos
 export const totalPrice = derived(
   cart,
-  ($cart) =>
-    $cart.reduce(
-      (total, item) => total + item.product.price * item.quantity,
-      0
-    )
+  ($cart) => $cart.reduce(
+    (total, item) => {
+      const price = item.appliedDiscount?.finalPrice || item.product.price;
+      return total + (price * item.quantity);
+    },
+    0
+  )
 );
 
-/**
- * Função para salvar o estado do carrinho no IndexedDB
- */
+// Funções de persistência
 const saveCartToDB = async (cartItems: CartItem[]): Promise<void> => {
+  if (!browser) return;
   try {
     await setInDB(CART_DB_KEY, cartItems);
   } catch (error) {
-    console.error('Erro ao salvar carrinho no IndexedDB:', error);
+    console.error('Erro ao salvar carrinho:', error);
   }
 };
 
-/**
- * Função para carregar o carrinho do IndexedDB
- */
 export const loadCartFromDB = async (): Promise<void> => {
+  if (!browser) return;
   try {
     const savedCart = await getFromDB<CartItem[]>(CART_DB_KEY);
-    if (savedCart) {
-      cart.set(savedCart);
-    }
+    if (savedCart) cart.set(savedCart);
   } catch (error) {
-    console.error('Erro ao carregar carrinho do IndexedDB:', error);
+    console.error('Erro ao carregar carrinho:', error);
   }
 };
 
-/**
- * Função para limpar o carrinho no IndexedDB
- */
 const clearCartFromDB = async (): Promise<void> => {
+  if (!browser) return;
   try {
     await deleteFromDB(CART_DB_KEY);
   } catch (error) {
-    console.error('Erro ao limpar carrinho no IndexedDB:', error);
+    console.error('Erro ao limpar carrinho:', error);
   }
 };
 
-// Ações para modificar o estado do carrinho
+// Ações do carrinho
 export const addToCart = (product: Product, quantity: number = 1): void => {
   cart.update((items) => {
-    const existingItem = items.find((item) => item.product.id === product.id);
-    let updatedCart;
-
-    if (existingItem) {
-      updatedCart = items.map((item) =>
-        item.product.id === product.id
-          ? { ...item, quantity: item.quantity + quantity }
-          : item
-      );
-    } else {
-      updatedCart = [...items, { product, quantity }];
+    const discount = calculateDiscounts(product, activeDiscounts);
+    const existingIndex = items.findIndex((item) => item.product.id === product.id);
+    
+    if (existingIndex > -1) {
+      const updatedItems = [...items];
+      updatedItems[existingIndex] = {
+        ...updatedItems[existingIndex],
+        quantity: updatedItems[existingIndex].quantity + quantity,
+        // Mantém o desconto original se já existir
+        appliedDiscount: updatedItems[existingIndex].appliedDiscount || discount
+      };
+      saveCartToDB(updatedItems);
+      return updatedItems;
     }
 
-    // Persistir no IndexedDB
-    saveCartToDB(updatedCart);
-    return updatedCart;
+    const newCart = [...items, { 
+      product, 
+      quantity,
+      appliedDiscount: discount 
+    }];
+    
+    saveCartToDB(newCart);
+    return newCart;
   });
 };
 
 export const removeFromCart = (productId: string): void => {
   cart.update((items) => {
-    const updatedCart = items.filter((item) => item.product.id !== productId);
-    saveCartToDB(updatedCart);
-    return updatedCart;
+    const newCart = items.filter((item) => item.product.id !== productId);
+    saveCartToDB(newCart);
+    return newCart;
   });
 };
 
 export const increaseQuantity = (productId: string): void => {
   cart.update((items) => {
-    const updatedCart = items.map((item) =>
+    const newCart = items.map((item) => 
       item.product.id === productId
         ? { ...item, quantity: item.quantity + 1 }
         : item
     );
-    saveCartToDB(updatedCart);
-    return updatedCart;
+    saveCartToDB(newCart);
+    return newCart;
   });
 };
 
 export const decreaseQuantity = (productId: string): void => {
   cart.update((items) => {
-    const updatedCart = items
-      .map((item) =>
+    const newCart = items
+      .map((item) => 
         item.product.id === productId
-          ? { ...item, quantity: item.quantity - 1 }
+          ? { ...item, quantity: Math.max(item.quantity - 1, 0) }
           : item
-      ) 
+      )
       .filter((item) => item.quantity > 0);
-    saveCartToDB(updatedCart);
-    return updatedCart;
+      
+    saveCartToDB(newCart);
+    return newCart;
   });
 };
 
@@ -125,5 +130,7 @@ export const clearCart = (): void => {
   clearCartFromDB();
 };
 
-// Inicializa o estado do carrinho ao carregar o app
-loadCartFromDB();
+// Inicialização
+if (browser) {
+  loadCartFromDB();
+}

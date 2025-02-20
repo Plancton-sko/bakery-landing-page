@@ -5,6 +5,7 @@
   import Header from '$lib/components/Header.svelte';
   import Spinner from '$lib/components/Spinner.svelte';
   import '../styles/global.css';
+  import { loadCartFromDB } from '$lib/stores/cart';
 
   let cartCount: number = 0;
   let loading: boolean = true;
@@ -14,6 +15,11 @@
       loading = false; // Simule o fim do carregamento após 2 segundos
     }, 600);
   });
+
+  onMount(() => {
+    loadCartFromDB();
+  })
+
 </script>
 <head>
   <link rel="preconnect" href="https://fonts.googleapis.com">

@@ -1,10 +1,9 @@
-// src/lib/const/Slide.ts
-import type { Slide } from "$lib/types/Slides";
+//src/lib/consts/Slides.ts
+import type { Slide } from '$lib/types/Slides';
 
-  
 export const slides: Slide[] = [
   {
-    src: "/images/angelo-pantazis.webp",
+    src: '/images/angelo-pantazis.webp?enhanced',
     alt: "Delicious artisan bread",
     title: "Artisan Bread",
     description: "Experience the taste of freshly baked, handcrafted bread.",
@@ -12,7 +11,7 @@ export const slides: Slide[] = [
     ctaButton: "/#",
   },
   {
-    src: "/images/clark-young.webp",
+    src: '/images/clark-young.webp?enhanced',
     alt: "Freshly baked croissants",
     title: "Flaky Croissants",
     description: "Enjoy our buttery, flaky croissants every morning.",
@@ -20,11 +19,11 @@ export const slides: Slide[] = [
     ctaButton: "/#",
   },
   {
-    src: "/images/ddp-CceG6jpl19M-unsplash.jpg",
+    src: '/images/ddp-CceG6jpl19M-unsplash.jpg?enhanced',
     alt: "Sourdough bread on display",
     title: "Sourdough Specialties",
     description: "Our sourdough is made with love and a long fermentation process.",
     ctaText: "Explore Sourdough",
     ctaButton: "/#",
   },
-  ];
+];

@@ -1,11 +1,12 @@
-<!--src/li/components/ProductCard.svelte-->
+<!-- src/lib/components/ProductCard.svelte -->
 <script lang="ts">
-  import { onMount } from 'svelte'; // Add this line to import onMount
   import type { Product } from "$lib/types/Product";
   import Modal from "$lib/components/Modal.svelte";
   import BottomSheet from "$lib/components/BottomSheet.svelte";
   import { addToCart, isCartOpen } from "$lib/stores/cart";
   import { formatPrice } from "$lib/utils/format";
+  import { activeDiscounts } from "$lib/consts/Discounts";
+  import { calculateDiscounts } from "$lib/utils/discounts";
 
   export let product: Product;
   export let isHighlighted: boolean = false;
@@ -13,27 +14,30 @@
   let isModalOpen = false;
   let quantity = 1;
   let isMobile = false;
+  let discountInfo = calculateDiscounts(product, activeDiscounts);
 
-  // Check if screen is mobile on mount
+  // Check screen size on mount
+  import { onMount } from "svelte";
   onMount(() => {
+    isMobile = window.innerWidth <= 768;
+    window.addEventListener("resize", () => {
       isMobile = window.innerWidth <= 768;
-      window.addEventListener('resize', () => {
-          isMobile = window.innerWidth <= 768;
-      });
+    });
   });
 
   const openModal = () => {
-      isModalOpen = true;
+    isModalOpen = true;
+    discountInfo = calculateDiscounts(product, activeDiscounts);
   };
 
   const closeModal = () => {
-      isModalOpen = false;
+    isModalOpen = false;
   };
 
   const handleAddToCart = () => {
-      addToCart(product, quantity);
-      isCartOpen.set(true);
-      closeModal();
+    addToCart(product, quantity);
+    isCartOpen.set(true);
+    closeModal();
   };
 </script>
 
@@ -42,56 +46,124 @@
   on:click={openModal}
   type="button"
 >
-  <img src="{product.image}" alt={product.name} loading="lazy"/>
+  {#if discountInfo}
+    <div class="discount-badge">
+      {discountInfo.discountType === 'percentage' 
+        ? `${discountInfo.discountAmount.toFixed(0)}% OFF`
+        : `-${formatPrice(discountInfo.discountAmount)}`}
+    </div>
+  {/if}
+  
+  <img src={product.image} alt={product.name} loading="lazy" />
   <h3>{product.name}</h3>
-  <p>{formatPrice(product.price)}</p>
+
+  <div class="price-container">
+    {#if discountInfo}
+      <p class="original-price">{formatPrice(discountInfo.originalPrice)}</p>
+      <p class="discounted-price">{formatPrice(discountInfo.finalPrice)}</p>
+    {:else}
+      <p>{formatPrice(product.price)}</p>
+    {/if}
+  </div>
 </button>
 
-<!-- Conditional rendering for Modal on desktop and BottomSheet on mobile -->
 {#if isMobile}
   <BottomSheet isOpen={isModalOpen} onClose={closeModal}>
-      <div class="bottomSheet-content">
-          <h2>{product.name}</h2>
-          <p>{product.description}</p>
-          <img src="{product.image}" alt={product.name} class="imgBottomSheet"/>
+    <div class="bottomSheet-content">
+      <h2>{product.name}</h2>
+      <p>{product.description}</p>
+      <img src={product.image} alt={product.name} class="imgBottomSheet" />
+      
+      <div class="modal-price">
+        {#if discountInfo}
+          <p class="original-price">{formatPrice(discountInfo.originalPrice)}</p>
+          <p class="discounted-price">{formatPrice(discountInfo.finalPrice)}</p>
+        {:else}
           <p>{formatPrice(product.price)}</p>
-          <label for="quantity">Quantity:</label>
-          <input
-              type="number"
-              id="quantity"
-              bind:value={quantity}
-              min="1"
-              class="quantity-input"
-          />
-
-          <button class="add-to-cart" on:click={handleAddToCart}>Add to Cart</button>
+        {/if}
       </div>
+
+      <label for="quantity">Quantidade:</label>
+      <input
+        type="number"
+        id="quantity"
+        bind:value={quantity}
+        min="1"
+        class="quantity-input"
+      />
+      
+      <button class="add-to-cart" on:click={handleAddToCart}>
+        Adicionar ao Carrinho - {#if discountInfo}{formatPrice(discountInfo.finalPrice * quantity)}{:else}{formatPrice(product.price * quantity)}{/if}
+      </button>
+    </div>
   </BottomSheet>
 {:else}
   <Modal isOpen={isModalOpen} onClose={closeModal}>
-      <div class="modal-content">
-          <h2>{product.name}</h2>
-          <p>{product.description}</p>
-          <img src={product.image} alt={product.name} class="imgModal" loading="lazy" />
+    <div class="modal-content">
+      <h2>{product.name}</h2>
+      <p>{product.description}</p>
+      <img src={product.image} alt={product.name} class="imgModal" />
+      
+      <div class="modal-price">
+        {#if discountInfo}
+          <p class="original-price">{formatPrice(discountInfo.originalPrice)}</p>
+          <p class="discounted-price">{formatPrice(discountInfo.finalPrice)}</p>
+        {:else}
           <p>{formatPrice(product.price)}</p>
-
-          <label for="quantity">Quantity:</label>
-          <input
-              type="number"
-              id="quantity"
-              bind:value={quantity}
-              min="1"
-              class="quantity-input"
-          />
-
-          <button class="add-to-cart" on:click={handleAddToCart}>Add to Cart</button>
+        {/if}
       </div>
+
+      <div class="quantity-controls">
+        <label for="quantity">Quantidade:</label>
+        <input
+          type="number"
+          id="quantity"
+          bind:value={quantity}
+          min="1"
+          class="quantity-input"
+        />
+      </div>
+
+      <button class="add-to-cart" on:click={handleAddToCart}>
+        Adicionar ({quantity}x) - {#if discountInfo}{formatPrice(discountInfo.finalPrice * quantity)}{:else}{formatPrice(product.price * quantity)}{/if}
+      </button>
+    </div>
   </Modal>
 {/if}
 
- 
 <style>
+  /* Estilos mantidos do original com adições para descontos */
+  .discount-badge {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: var(--danger-color);
+    color: white;
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 0.8rem;
+    font-weight: bold;
+    z-index: 1;
+  }
 
+  .price-container {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+  }
+
+  .original-price {
+    text-decoration: line-through;
+    color: #999;
+    font-size: 0.9rem;
+  }
+
+  .discounted-price {
+    color: var(--primary-color);
+    font-weight: bold;
+    font-size: 1.1rem;
+  }
+  
   .product-card {
     display: flex;
     flex-direction: column;
@@ -101,14 +173,16 @@
     padding: var(--spacing-md);
     border-radius: var(--border-radius);
     background: #fdfdfd;
-    transition: box-shadow 0.3s ease, transform 0.2s ease;
+    transition:
+      box-shadow 0.3s ease,
+      transform 0.2s ease;
     cursor: pointer;
     width: 100%;
     height: 100%;
   }
 
   .product-card:hover {
-    box-shadow:var(--box-shadow-intense);
+    box-shadow: var(--box-shadow-intense);
     transform: translateY(-3px);
   }
 
@@ -156,7 +230,6 @@
     border-radius: var(--border-radius);
     font-family: var(--font-primary);
   }
-  
 
   .imgBottomSheet {
     max-width: 400px;
@@ -200,12 +273,13 @@
     border: none;
     border-radius: var(--border-radius-small);
     cursor: pointer;
-    transition: background-color 0.3s, transform 0.2s;
+    transition:
+      background-color 0.3s,
+      transform 0.2s;
   }
 
   .add-to-cart:hover {
     background-color: var(--button-background-hover);
     transform: scale(1.05);
   }
-
-  </style>
+</style>
