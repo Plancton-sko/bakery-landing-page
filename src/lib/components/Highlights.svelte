@@ -19,7 +19,10 @@
     {#each highlights as highlight (highlight.id)}
         {#if highlight.isActive}
             <div class="highlight-item">
-                <img src={highlight.image} alt={highlight.name} />
+                <enhanced:img
+        src={highlight.image}
+        alt={highlight.name} 
+        />
                 <h3>{highlight.name}</h3>
                 <p>${highlight.price / 100}</p>
             </div>

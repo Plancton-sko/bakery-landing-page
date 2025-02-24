@@ -2,13 +2,14 @@
 
 import type { Categories } from "$lib/enums/Categories";
 import type { Writable } from "svelte/store";
+import type { Picture } from "vite-imagetools";
 
 export type Product = {
     id: string;
     name: string;
     price: number;
     category: Categories;
-    image: string;
+    image: string | Picture;
     description: string;
   };
 

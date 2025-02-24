@@ -1,8 +1,8 @@
-
-
 // src/lib/types/Slides.ts
+import type { Picture } from "vite-imagetools";
+
 export interface Slide {
-  src: string ;
+  src: string | Picture;
   alt: string;
   title: string;
   description: string;

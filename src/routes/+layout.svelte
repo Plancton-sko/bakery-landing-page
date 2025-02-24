@@ -17,18 +17,23 @@
   });
 
   onMount(() => {
+    if (typeof window !== 'undefined') {
+      const images = document.querySelectorAll('enhanced:img');
+      images.forEach(img => {
+        img.addEventListener('load', () => {
+          // console.log(`Image loaded: ${img.src}`);
+          // performance.mark(`image-${img.src}-loaded`);
+        });
+      });
+    }
+  });
+
+  onMount(() => {
     loadCartFromDB();
   })
 
 </script>
-<head>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..900;1,6..96,400..900&display=swap" rel="stylesheet">
-  
-</head>
-<body>
-<Header {cartCount} />
+<Header/>
 
 {#if loading}
   <div class="spinner-container">
@@ -38,7 +43,7 @@
   <slot />
 {/if}
 
-</body>
+
 <Footer />
 
 <style>

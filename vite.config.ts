@@ -6,10 +6,9 @@ import { defineConfig } from 'vite';
 
 export default defineConfig({
 	plugins: [
-		sveltekit(),
 		enhancedImages(),
-		
-	],
+		sveltekit()
+	  ],
 	css: {
 		preprocessorOptions: {
 		  css: {

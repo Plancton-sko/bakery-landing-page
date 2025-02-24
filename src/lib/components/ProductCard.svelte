@@ -48,13 +48,29 @@
 >
   {#if discountInfo}
     <div class="discount-badge">
-      {discountInfo.discountType === 'percentage' 
-        ? `${discountInfo.discountAmount.toFixed(0)}% OFF`
-        : `-${formatPrice(discountInfo.discountAmount)}`}
+      {#if discountInfo.discountType === "percentage"}
+        {`${((discountInfo.discountAmount / discountInfo.originalPrice) * 100).toFixed(0)}% OFF`}
+      {:else}
+        {`-${formatPrice(discountInfo.discountAmount)}`}
+      {/if}
     </div>
   {/if}
-  
-  <img src={product.image} alt={product.name} loading="lazy" />
+
+  <enhanced:img
+    src={product.image}
+    alt={product.name}
+    srcset="
+  {product.image}?w=400&q=80&format=webp 400w,
+  {product.image}?w=800&q=80&format=webp 800w,
+  {product.image}?w=1200&q=80&format=webp 1200w
+"
+    sizes="(max-width: 640px) 100vw,
+      (max-width: 1024px) 90vw,
+      (max-width: 1280px) 85vw,
+      80vw"
+    loading="lazy"
+    decoding="async"
+  />
   <h3>{product.name}</h3>
 
   <div class="price-container">
@@ -72,11 +88,28 @@
     <div class="bottomSheet-content">
       <h2>{product.name}</h2>
       <p>{product.description}</p>
-      <img src={product.image} alt={product.name} class="imgBottomSheet" />
-      
+      <enhanced:img
+        src={product.image}
+        alt={product.name}
+        srcset="
+    {product.image}?w=400&q=80&format=webp 400w,
+    {product.image}?w=800&q=80&format=webp 800w,
+    {product.image}?w=1200&q=80&format=webp 1200w
+  "
+        sizes="(max-width: 640px) 100vw,
+        (max-width: 1024px) 90vw,
+        (max-width: 1280px) 85vw,
+        80vw"
+        loading="lazy"
+        decoding="async"
+        class="imgBottomSheet"
+      />
+
       <div class="modal-price">
         {#if discountInfo}
-          <p class="original-price">{formatPrice(discountInfo.originalPrice)}</p>
+          <p class="original-price">
+            {formatPrice(discountInfo.originalPrice)}
+          </p>
           <p class="discounted-price">{formatPrice(discountInfo.finalPrice)}</p>
         {:else}
           <p>{formatPrice(product.price)}</p>
@@ -91,9 +124,9 @@
         min="1"
         class="quantity-input"
       />
-      
+
       <button class="add-to-cart" on:click={handleAddToCart}>
-        Adicionar ao Carrinho - {#if discountInfo}{formatPrice(discountInfo.finalPrice * quantity)}{:else}{formatPrice(product.price * quantity)}{/if}
+        Adicionar ao Carrinho
       </button>
     </div>
   </BottomSheet>
@@ -102,11 +135,28 @@
     <div class="modal-content">
       <h2>{product.name}</h2>
       <p>{product.description}</p>
-      <img src={product.image} alt={product.name} class="imgModal" />
-      
+      <enhanced:img
+        src={product.image}
+        alt={product.name}
+        srcset="
+    {product.image}?w=400&q=80&format=webp 400w,
+    {product.image}?w=800&q=80&format=webp 800w,
+    {product.image}?w=1200&q=80&format=webp 1200w
+  "
+        sizes="(max-width: 640px) 100vw,
+        (max-width: 1024px) 90vw,
+        (max-width: 1280px) 85vw,
+        80vw"
+        loading="lazy"
+        decoding="async"
+        class="imgModal"
+      />
+
       <div class="modal-price">
         {#if discountInfo}
-          <p class="original-price">{formatPrice(discountInfo.originalPrice)}</p>
+          <p class="original-price">
+            {formatPrice(discountInfo.originalPrice)}
+          </p>
           <p class="discounted-price">{formatPrice(discountInfo.finalPrice)}</p>
         {:else}
           <p>{formatPrice(product.price)}</p>
@@ -125,7 +175,7 @@
       </div>
 
       <button class="add-to-cart" on:click={handleAddToCart}>
-        Adicionar ({quantity}x) - {#if discountInfo}{formatPrice(discountInfo.finalPrice * quantity)}{:else}{formatPrice(product.price * quantity)}{/if}
+        Adicionar ao Carrinho
       </button>
     </div>
   </Modal>
@@ -134,6 +184,7 @@
 <style>
   /* Estilos mantidos do original com adições para descontos */
   .discount-badge {
+    display: block;
     position: absolute;
     top: 10px;
     right: 10px;
@@ -163,7 +214,7 @@
     font-weight: bold;
     font-size: 1.1rem;
   }
-  
+
   .product-card {
     display: flex;
     flex-direction: column;

@@ -12,7 +12,7 @@ export const activeDiscounts: DiscountRule[] = [
   },
   {
     type: 'fixed',
-    value: 2, // $2 de desconto
+    value: 2, 
     applyTo: {
       productIds: ['550e8400-e29b-41d4-a716-446655440004'] // ID do Espresso
     }

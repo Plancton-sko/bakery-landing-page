@@ -4,12 +4,19 @@
   import { writable, type Writable } from "svelte/store";
   import { slides } from "$lib/consts/Slides";
 
-  let currentSlideIndex: Writable<number> = writable(0);
-  let autoSlideInterval: ReturnType<typeof setInterval>;
+  const BREAKPOINTS = {
+    mobile: 640, // 0px - 640px
+    tablet: 1024, // 641px - 1024px
+    desktop: 1280, // 1025px - 1280px
+    hd: 1920, // 1281px+
+  };
+
+  const currentSlideIndex = writable(0);
+  let autoSlideInterval: NodeJS.Timeout;
 
   onMount(() => {
     autoSlideInterval = setInterval(() => {
-      currentSlideIndex.update((n) => (n + 1) % slides.length);
+      currentSlideIndex.update((n: number) => (n + 1) % slides.length);
     }, 5000);
 
     return () => clearInterval(autoSlideInterval);
@@ -30,22 +37,29 @@
 
 <section id="hero">
   {#each slides as { src, alt, title, description, ctaText, ctaButton }, index}
-    <div class="slide {index === $currentSlideIndex ? 'active' : ''}">
-        <picture>
-          <source srcset="{src}?w=480&format=webp" media="(max-width: 480px)" type="image/webp">
-          <source srcset="{src}?w=1024&format=webp" media="(max-width: 1024px)" type="image/webp">
-          <img src="{src}?w=1920&format=webp" alt="{alt}" loading="lazy" decoding="async">
-        </picture>
+    <div class:active={$currentSlideIndex === index} class="slide">
+      <enhanced:img
+        {src}
+        {alt}
+        srcset="
+          {src}?w=400&q=80&format=webp 400w,
+          {src}?w=800&q=80&format=webp 800w,
+          {src}?w=1200&q=80&format=webp 1200w
+        "
+        sizes="(max-width: 640px) 100vw,
+              (max-width: 1024px) 90vw,
+              (max-width: 1280px) 85vw,
+              80vw"
+        loading={index === 0 ? "eager" : "lazy"}
+        decoding="async"
+        class="hero-image"
+      />
 
-      <div class="overlay"></div>
-
-      {#if index === $currentSlideIndex}
+      {#if $currentSlideIndex === index}
         <div class="slide-content">
           <h1>{title}</h1>
           <p>{description}</p>
-          <button class="cta-button" on:click={() => (window.location.href = ctaButton)}>
-            {ctaText}
-          </button>
+          <a href={ctaButton} class="cta-button">{ctaText}</a>
         </div>
       {/if}
     </div>
@@ -54,19 +68,34 @@
   <div class="click-area left" on:click={previousSlide}></div>
   <div class="click-area right" on:click={nextSlide}></div>
 
+  <!-- Controles -->
   <div class="controls">
     {#each slides as _, index}
       <button
-        type="button"
         on:click={() => goToSlide(index)}
-        class:active={index === $currentSlideIndex}
-        aria-label={`Go to slide ${index + 1}`}
+        class:active={$currentSlideIndex === index}
+        aria-label={`Slide ${index + 1}`}
       ></button>
     {/each}
   </div>
 </section>
 
-<style>
+<style lang="scss">
+  $mobile-break: 640px;
+  $tablet-break: 1024px;
+  $desktop-break: 1280px;
+
+  .hero-image {
+    width: 100%;
+    height: 100vh;
+    max-height: 800px;
+    object-fit: cover;
+    transition: opacity 0.5s ease;
+  }
+
+  .hero-image[data-loading] {
+    opacity: 0.8;
+  }
 
   #hero {
     position: relative;
@@ -117,7 +146,7 @@
     z-index: 2;
     text-align: center;
     color: var(--white-text);
-    font-family: var( --font-tertiary);
+    font-family: var(--font-tertiary);
     max-width: 80%;
   }
 
@@ -142,7 +171,7 @@
     border-radius: 5px;
     cursor: pointer;
     transition: background-color 0.3s ease;
-    box-shadow: var( --box-shadow);
+    box-shadow: var(--box-shadow);
   }
 
   .cta-button:hover {
