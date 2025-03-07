@@ -5,7 +5,9 @@
 
     // Função para alternar o destaque ativo
     function rotateHighlights() {
-        const currentIndex = highlights.findIndex((highlight) => highlight.isActive);
+        const currentIndex = highlights.findIndex(
+            (highlight) => highlight.isActive,
+        );
         highlights[currentIndex].isActive = false;
         const nextIndex = (currentIndex + 1) % highlights.length;
         highlights[nextIndex].isActive = true;
@@ -19,10 +21,7 @@
     {#each highlights as highlight (highlight.id)}
         {#if highlight.isActive}
             <div class="highlight-item">
-                <enhanced:img
-        src={highlight.image}
-        alt={highlight.name} 
-        />
+                <enhanced:img src={highlight.image} alt={highlight.name} class="enhanced-img"/>
                 <h3>{highlight.name}</h3>
                 <p>${highlight.price / 100}</p>
             </div>
@@ -51,13 +50,12 @@
         text-align: center;
     }
 
-    .highlight-item img {
-        width: 100%; /* A largura será 100% do container */
-        min-height: 400px; /* Limite de altura de 400px */
+    .enhanced-img {
+        width: 100%;
+        height: 400px;
         border-radius: var(--border-radius-medium);
-        object-fit: cover; /* Faz a imagem se ajustar como se fosse um "zoom" */
+        object-fit: cover;
     }
-
 
     .highlight-item h3 {
         margin: 10px 0;
@@ -68,33 +66,31 @@
         color: var(--text-color);
     }
 
-    @media (max-width:720px) {
-    .highlights{
-        display: none;
-      }
-    .highlight-item img {
-        min-width: 100%; /* A largura será 100% do container */
-        height: 300px; /* Limite de altura de 400px */
-        border-radius: 8px;
-        object-fit: cover; /* Faz a imagem se ajustar como se fosse um "zoom" */
+    @media (max-width: 720px) {
+        .highlights {
+            display: none;
+        }
+        .enhanced-img {
+            min-width: 100%; /* A largura será 100% do container */
+            height: 300px; /* Limite de altura de 400px */
+            border-radius: 8px;
+            object-fit: cover; /* Faz a imagem se ajustar como se fosse um "zoom" */
+        }
     }
-  }
-  @media(min-width:720px) and (max-width: 1080px){
-    .highlights {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        margin-bottom: 20px;
-        width: 80%;
-        min-height: 100%;
+    @media (min-width: 720px) and (max-width: 1080px) {
+        .highlights {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 20px;
+            width: 80%;
+            min-height: 100%;
+        }
+        .enhanced-img {
+            min-width: 100%; /* A largura será 100% do container */
+            max-height: 300px; /* Limite de altura de 400px */
+            border-radius: 8px;
+            object-fit: cover; /* Faz a imagem se ajustar como se fosse um "zoom" */
+        }
     }
-    .highlight-item img {
-        min-width: 100%; /* A largura será 100% do container */
-        max-height: 300px; /* Limite de altura de 400px */
-        border-radius: 8px;
-        object-fit: cover; /* Faz a imagem se ajustar como se fosse um "zoom" */
-
-    }
-  }
-
 </style>

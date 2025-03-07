@@ -9,4 +9,4 @@ export interface Highlight extends Partial<Product> {
   image: string | Picture;
   description?: string; 
   isActive?: boolean;
-}
+} 
