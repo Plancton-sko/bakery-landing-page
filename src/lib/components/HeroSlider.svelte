@@ -80,10 +80,7 @@
   </div>
 </section>
 
-<style lang="scss">
-  $mobile-break: 640px;
-  $tablet-break: 1024px;
-  $desktop-break: 1280px;
+<style lang="css">
 
   .hero-image {
     width: 100%;
@@ -91,10 +88,6 @@
     max-height: 800px;
     object-fit: cover;
     transition: opacity 0.5s ease;
-  }
-
-  .hero-image[data-loading] {
-    opacity: 0.8;
   }
 
   #hero {
