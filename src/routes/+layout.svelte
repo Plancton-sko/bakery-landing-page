@@ -7,6 +7,8 @@
   import '../styles/global.css';
   import { loadCartFromDB } from '$lib/stores/cart';
 
+  export let data;
+
   let cartCount: number = 0;
   let loading: boolean = true;
 
@@ -14,18 +16,6 @@
     setTimeout(() => {
       loading = false; // Simule o fim do carregamento após 2 segundos
     }, 600);
-  });
-
-  onMount(() => {
-    if (typeof window !== 'undefined') {
-      const images = document.querySelectorAll('enhanced:img');
-      images.forEach(img => {
-        img.addEventListener('load', () => {
-          // console.log(`Image loaded: ${img.src}`);
-          // performance.mark(`image-${img.src}-loaded`);
-        });
-      });
-    }
   });
 
   onMount(() => {
@@ -40,7 +30,7 @@
     <Spinner />
   </div>
 {:else}
-  <slot />
+  <slot {data}/>
 {/if}
 
 

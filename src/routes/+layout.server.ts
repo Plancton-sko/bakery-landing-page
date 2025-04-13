@@ -1,16 +1,28 @@
 // src/routes/+layout.server.ts
+import { Categories } from '$lib/enums/Categories';
+import { config } from '$lib/services/config';
 import type { Product } from '$lib/types/Product';
 import type { LayoutServerLoad } from './$types';
 
 export const load: LayoutServerLoad = async ({ fetch }) => {
-  const response = await fetch('/api/products');
-  
-  if (!response.ok) {
-    throw new Error('Erro ao carregar produtos');
-  }
+  // Busca os produtos da API
+  const baseUrl = config.baseUrl;
+  console.log(baseUrl);
+  const res = await fetch(baseUrl + '/products');
+  console.log(res);
+  const data = await res.json();
+  console.log(data);
 
-  const products: Product[] = await response.json();
-  
+  // Converte o preço de Decimal (se vier como string) para number
+  const products = data.map((product: Product) => ({
+    id: product.id,
+    name: product.name,
+    category: product.category, 
+    description: product.description,
+    price: Number(product.price),
+    image: product.image // A imagem vem como base64
+  }));
+
   return {
     products
   };

@@ -16,8 +16,11 @@
   let isMobile = false;
   let discountInfo = calculateDiscounts(product, activeDiscounts);
 
+  console.log(product);
+
   // Check screen size on mount
   import { onMount } from "svelte";
+    import type { Picture } from "vite-imagetools";
   onMount(() => {
     isMobile = window.innerWidth <= 768;
     window.addEventListener("resize", () => {
@@ -39,6 +42,16 @@
     isCartOpen.set(true);
     closeModal();
   };
+
+  let isExternal = false;
+
+  let imageUrl: string | Picture;
+  if (typeof product.image === "string") {
+    isExternal = true;
+  } else {
+    isExternal = false;
+  }
+ 
 </script>
 
 <button
@@ -56,14 +69,24 @@
     </div>
   {/if}
 
+  {#if isExternal}
+  <!-- Renderiza imagem externa sem transformações -->
+  <img
+    src={product.image as string}
+    alt={product.name}
+    loading="lazy"
+    decoding="async"
+  />
+{:else}
+  <!-- Processa imagens locais com enhanced:img -->
   <enhanced:img
     src={product.image}
     alt={product.name}
     srcset="
-  {product.image}?w=400&q=80&format=webp 400w,
-  {product.image}?w=800&q=80&format=webp 800w,
-  {product.image}?w=1200&q=80&format=webp 1200w
-"
+      {product.image}?w=400&q=80&format=webp 400w,
+      {product.image}?w=800&q=80&format=webp 800w,
+      {product.image}?w=1200&q=80&format=webp 1200w
+    "
     sizes="(max-width: 640px) 100vw,
       (max-width: 1024px) 90vw,
       (max-width: 1280px) 85vw,
@@ -71,6 +94,7 @@
     loading="lazy"
     decoding="async"
   />
+{/if}
   <h3>{product.name}</h3>
 
   <div class="price-container">
@@ -88,7 +112,7 @@
     <div class="bottomSheet-content">
       <h2>{product.name}</h2>
       <p>{product.description}</p>
-      <enhanced:img
+      <!-- <enhanced:img
         src={product.image}
         alt={product.name}
         srcset="
@@ -103,7 +127,35 @@
         loading="lazy"
         decoding="async"
         class="imgBottomSheet"
-      />
+      /> -->
+      {#if isExternal}
+  <!-- Renderiza imagem externa sem transformações -->
+  <img
+    src={product.image as string}
+    alt={product.name}
+    loading="lazy"
+    decoding="async"
+    class="imgBottomSheet"
+  />
+{:else}
+  <!-- Processa imagens locais com enhanced:img -->
+  <enhanced:img
+    src={product.image}
+    alt={product.name}
+    srcset="
+      {product.image}?w=400&q=80&format=webp 400w,
+      {product.image}?w=800&q=80&format=webp 800w,
+      {product.image}?w=1200&q=80&format=webp 1200w
+    "
+    sizes="(max-width: 640px) 100vw,
+      (max-width: 1024px) 90vw,
+      (max-width: 1280px) 85vw,
+      80vw"
+    loading="lazy"
+    decoding="async"
+    class="imgBottomSheet"
+  />
+{/if}
 
       <div class="modal-price">
         {#if discountInfo}
@@ -135,8 +187,8 @@
     <div class="modal-content">
       <h2>{product.name}</h2>
       <p>{product.description}</p>
-      <enhanced:img
-        src={product.image}
+      <!-- <enhanced:img
+        src={product.imagePath ?? product.image}
         alt={product.name}
         srcset="
     {product.image}?w=400&q=80&format=webp 400w,
@@ -150,7 +202,35 @@
         loading="lazy"
         decoding="async"
         class="imgModal"
-      />
+      /> -->
+      {#if isExternal}
+  <!-- Renderiza imagem externa sem transformações -->
+  <img
+    src={product.image as string}
+    alt={product.name}
+    loading="lazy"
+    decoding="async"
+    class="imgModal"
+  />
+{:else}
+  <!-- Processa imagens locais com enhanced:img -->
+  <enhanced:img
+    src={product.image}
+    alt={product.name}
+    srcset="
+      {product.image}?w=400&q=80&format=webp 400w,
+      {product.image}?w=800&q=80&format=webp 800w,
+      {product.image}?w=1200&q=80&format=webp 1200w
+    "
+    sizes="(max-width: 640px) 100vw,
+      (max-width: 1024px) 90vw,
+      (max-width: 1280px) 85vw,
+      80vw"
+    loading="lazy"
+    decoding="async"
+    class="imgModal"
+  />
+{/if}
 
       <div class="modal-price">
         {#if discountInfo}
@@ -237,14 +317,14 @@
     transform: translateY(-3px);
   }
 
-  .product-card img {
+  /* .product-card img {
     width: 100%;
     max-width: 240px;
     height: 240px;
     object-fit: cover;
     border-radius: 8px;
     box-shadow: var(--box-shadow-medium);
-  }
+  } */
 
   .product-card h3 {
     font-family: var(--font-primary);
