@@ -18,7 +18,7 @@ span,
 label,
 input,
 option {
-  user-select: none;
+  -webkit-user-select: none;
 }
 
 
@@ -81,7 +81,7 @@ img {
   /* Opera */
   user-drag: none;
   /* No drag */
-  user-select: none;
+  -webkit-user-select: none;
   /* No select */
 }
 
@@ -96,7 +96,7 @@ select {
   /* Opera */
   user-drag: none;
   /* No drag */
-  user-select: none;
+  -webkit-user-select: none;
   /* No select */
 }
 

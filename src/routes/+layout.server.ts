@@ -1,29 +1,35 @@
 // src/routes/+layout.server.ts
-import { Categories } from '$lib/enums/Categories';
 import { config } from '$lib/services/config';
-import type { Product } from '$lib/types/Product';
 import type { LayoutServerLoad } from './$types';
+import type { Product } from '$lib/types/Product';
 
-export const load: LayoutServerLoad = async ({ fetch }) => {
-  // Busca os produtos da API
+export const load: LayoutServerLoad = async ({ fetch, locals }) => {
   const baseUrl = config.baseUrl;
-  console.log(baseUrl);
-  const res = await fetch(baseUrl + '/products');
-  console.log(res);
-  const data = await res.json();
-  console.log(data);
 
-  // Converte o preço de Decimal (se vier como string) para number
-  const products = data.map((product: Product) => ({
-    id: product.id,
-    name: product.name,
-    category: product.category, 
-    description: product.description,
-    price: Number(product.price),
-    image: product.image // A imagem vem como base64
+  const user = locals.user; // <<< já vem do hook, não precisa buscar de novo
+
+  const res = await fetch(`${baseUrl}/products`, {
+    credentials: 'include'
+  });
+
+  if (!res.ok) {
+    console.error('Falha ao buscar produtos', await res.text());
+    return { products: [], user };
+  }
+
+  const data = await res.json();
+
+  const products: Product[] = data.map((p: any) => ({
+    id: p.id,
+    name: p.name,
+    category: p.category,
+    description: p.description,
+    price: Number(p.price),
+    image: p.image
   }));
 
   return {
+    user,
     products
   };
 };

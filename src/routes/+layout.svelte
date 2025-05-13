@@ -1,6 +1,6 @@
 <!--src/routes/+layout.svelte-->
 <script lang="ts">
-  import { onMount } from 'svelte'; // Adicione essa linha
+  import { onMount } from 'svelte'; 
   import Footer from '$lib/components/Footer.svelte';
   import Header from '$lib/components/Header.svelte';
   import Spinner from '$lib/components/Spinner.svelte';

@@ -24,7 +24,6 @@
   <AboutUs />
   <HotDeals />
   <Contact />
-  <AdminProducts />
 </main>
 
 <style>
