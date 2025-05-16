@@ -1,5 +1,5 @@
 <script>
-    import AdminProducts from "$lib/components/AdminProducts.svelte";
+    import AdminDashboard from "$lib/components/AdminDashboard.svelte";
 </script>
 
-<AdminProducts />
+<AdminDashboard />
