@@ -2,7 +2,6 @@
 <script lang="ts">
   import { onMount } from "svelte";
   import { config } from "$lib/services/config";
-  import ImageGallery from "./ImageGallery.svelte";
   import type { Product } from "$lib/types/Product";
 
   type Highlight = {
@@ -164,9 +163,10 @@
         {/if}
       </div>
       
+      <!-- FIXME: Remove ImageGallery -->
       {#if showImageGallery}
         <div class="gallery-container">
-          <ImageGallery onSelectImage={onSelectImage} />
+          <!-- <ImageGallery onSelectImage={onSelectImage} /> -->
           <button 
             type="button" 
             class="btn btn-cancel" 

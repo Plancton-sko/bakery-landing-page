@@ -1,25 +1,62 @@
 <!--src/lib/components/HeroSlider.svelte-->
 <script lang="ts">
   import { onMount } from "svelte";
-  import { writable, type Writable } from "svelte/store";
-  import { slides } from "$lib/consts/Slides";
+  import { writable, type Writable, get } from "svelte/store";
+  import { config } from "$lib/services/config";
 
-  const BREAKPOINTS = {
-    mobile: 640, // 0px - 640px
-    tablet: 1024, // 641px - 1024px
-    desktop: 1280, // 1025px - 1280px
-    hd: 1920, // 1281px+
-  };
-
+  // Definição da interface Slide com base no backend
+  interface Slide {
+    id: string;
+    title: string;
+    subtitle?: string;
+    image: string;
+    buttonText?: string;
+    buttonLink?: string;
+    order: number;
+  }
+  
+  // Store para armazenar os slides
+  const slidesStore: Writable<Slide[]> = writable([]);
   const currentSlideIndex = writable(0);
-  let autoSlideInterval: NodeJS.Timeout;
+  let autoSlideInterval: ReturnType<typeof setInterval>;
+  let loading = true;
+  let error = false;
+  
+  // URL base para API
+  const baseUrl = config.baseUrl;
 
   onMount(() => {
-    autoSlideInterval = setInterval(() => {
-      currentSlideIndex.update((n: number) => (n + 1) % slides.length);
-    }, 5000);
+    const fetchSlides = async () => {
+      try {
+        // Buscar slides do backend
+        const response = await fetch(`${baseUrl}/slides`);
+        if (!response.ok) throw new Error('Falha ao buscar slides');
+        
+        const data = await response.json();
+        // Ordenar slides por ordem
+        data.sort((a: Slide, b: Slide) => a.order - b.order);
+        slidesStore.set(data);
+        
+        // Iniciar autoplay somente se houver slides
+        if (data.length > 0) {
+          autoSlideInterval = setInterval(() => {
+            currentSlideIndex.update((n: number) => (n + 1) % data.length);
+          }, 5000);
+        }
+        
+        loading = false;
+      } catch (err) {
+        console.error("Erro ao carregar slides:", err);
+        error = true;
+        loading = false;
+      }
+    };
 
-    return () => clearInterval(autoSlideInterval);
+    fetchSlides();
+
+    return () => {
+      if (autoSlideInterval) clearInterval(autoSlideInterval);
+    };
   });
 
   function goToSlide(index: number) {
@@ -27,60 +64,95 @@
   }
 
   function nextSlide() {
+    const slides = get(slidesStore);
     currentSlideIndex.update((n) => (n + 1) % slides.length);
   }
 
   function previousSlide() {
+    const slides = get(slidesStore);
     currentSlideIndex.update((n) => (n - 1 + slides.length) % slides.length);
+  }
+
+  // Função auxiliar para tratar caminhos de imagem
+  function getImagePath(path: string) {
+    // Se a imagem já começa com http ou é uma URL absoluta, não é necessário modificar
+    if (path.startsWith('http') || path.startsWith('/')) {
+      return path;
+    }
+    // Caso contrário, adicione o caminho base (ajuste conforme necessário)
+    return `${baseUrl}/${path}`;
   }
 </script>
 
 <section id="hero">
-  {#each slides as { src, alt, title, description, ctaText, ctaButton }, index}
-    <div class:active={$currentSlideIndex === index} class="slide">
-      <enhanced:img
-        {src}
-        {alt}
-        srcset="
-          {src}?w=400&q=80&format=webp 400w,
-          {src}?w=800&q=80&format=webp 800w,
-          {src}?w=1200&q=80&format=webp 1200w
-        "
-        sizes="(max-width: 640px) 100vw,
-              (max-width: 1024px) 90vw,
-              (max-width: 1280px) 85vw,
-              80vw"
-        loading={index === 0 ? "eager" : "lazy"}
-        decoding="async"
-        class="hero-image"
-      />
-
-      {#if $currentSlideIndex === index}
-        <div class="slide-content">
-          <h1>{title}</h1>
-          <p>{description}</p>
-          <a href={ctaButton} class="cta-button">{ctaText}</a>
-        </div>
-      {/if}
+  {#if loading}
+    <div class="loading">
+      <p>Carregando slides...</p>
     </div>
-  {/each}
+  {:else if error}
+    <div class="error">
+      <p>Não foi possível carregar os slides. Por favor, tente novamente mais tarde.</p>
+    </div>
+  {:else}
+    {#each $slidesStore as slide, index}
+      <div class:active={$currentSlideIndex === index} class="slide">
+        <img
+          src={getImagePath(slide.image)}
+          alt={slide.title}
+          loading={index === 0 ? "eager" : "lazy"}
+          decoding="async"
+          class="hero-image"
+        />
 
-  <div class="click-area left" on:click={previousSlide}></div>
-  <div class="click-area right" on:click={nextSlide}></div>
-
-  <!-- Controles -->
-  <div class="controls">
-    {#each slides as _, index}
-      <button
-        on:click={() => goToSlide(index)}
-        class:active={$currentSlideIndex === index}
-        aria-label={`Slide ${index + 1}`}
-      ></button>
+        {#if $currentSlideIndex === index}
+          <div class="slide-content">
+            <h1>{slide.title}</h1>
+            {#if slide.subtitle}
+              <p>{slide.subtitle}</p>
+            {/if}
+            {#if slide.buttonText && slide.buttonLink}
+              <a href={slide.buttonLink} class="cta-button">{slide.buttonText}</a>
+            {/if}
+          </div>
+        {/if}
+      </div>
     {/each}
-  </div>
+
+    {#if $slidesStore.length > 1}
+      <div class="click-area left" on:click={previousSlide}></div>
+      <div class="click-area right" on:click={nextSlide}></div>
+
+      <!-- Controles -->
+      <div class="controls">
+        {#each $slidesStore as _, index}
+          <button
+            on:click={() => goToSlide(index)}
+            class:active={$currentSlideIndex === index}
+            aria-label={`Slide ${index + 1}`}
+          ></button>
+        {/each}
+      </div>
+    {/if}
+  {/if}
 </section>
 
 <style lang="css">
+  /* Mantemos o CSS original com algumas adições */
+  
+  .loading, .error {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 400px;
+    width: 100%;
+    background: #f7f0e5;
+    color: #555;
+    font-size: 1.2rem;
+  }
+  
+  .error {
+    color: #d32f2f;
+  }
 
   .hero-image {
     width: 100%;

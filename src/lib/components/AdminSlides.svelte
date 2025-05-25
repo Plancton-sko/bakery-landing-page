@@ -2,7 +2,7 @@
 <script lang="ts">
   import { onMount } from "svelte";
   import { config } from "$lib/services/config";
-  import ImageGallery from "./ImageGallery.svelte";
+    import ImageGallery from "./ImageGallery.svelte";
 
   type Slide = {
     id?: string;
@@ -224,7 +224,7 @@
       
       {#if showImageGallery}
         <div class="gallery-container">
-          <ImageGallery onSelectImage={onSelectImage} />
+          <!-- <ImageGallery onSelectImage={onSelectImage} /> -->
           <button 
             type="button" 
             class="btn btn-cancel" 

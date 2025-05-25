@@ -1,8 +1,16 @@
 <!-- src/lib/components/CartModal.svelte -->
 <script lang="ts">
-  import { cart, clearCart, removeFromCart, increaseQuantity, decreaseQuantity, totalPrice } from "$lib/stores/cart";
-  import { get } from 'svelte/store';
+  import {
+    cart,
+    clearCart,
+    removeFromCart,
+    increaseQuantity,
+    decreaseQuantity,
+    totalPrice,
+  } from "$lib/stores/cart";
+  import { get } from "svelte/store";
   import { formatPrice } from "$lib/utils/format";
+  import { config } from "$lib/services/config";
 
   export let closeCartModal: () => void;
 
@@ -11,9 +19,13 @@
   let userName = "";
   let userAddress = "";
   let userEmail = "";
+  let isSubmitting = false;
+  let error = "";
+
+  const baseUrl = config.baseUrl;
 
   // Atualiza quando o carrinho muda
-  cart.subscribe(items => {
+  cart.subscribe((items) => {
     cartItems = items;
   });
 
@@ -25,41 +37,92 @@
     showUserForm = true;
   };
 
-  const checkout = () => {
+  const checkout = async () => {
     if (cartItems.length === 0) {
-      alert("O carrinho está vazio!");
+      error = "O carrinho está vazio!";
       return;
     }
 
     if (!isFormValid()) {
-      alert("Preencha todos os campos!");
+      error = "Preencha todos os campos!";
       return;
     }
 
-    const productList = cartItems
-      .map(item => {
-        const price = item.appliedDiscount?.finalPrice || item.product.price;
-        return `${item.quantity}x ${item.product.name} - ${formatPrice(price * item.quantity)}`;
-      })
-      .join("\n");
+    isSubmitting = true;
+    error = "";
 
-    const total = cartItems.reduce((acc, item) => {
-      const price = item.appliedDiscount?.finalPrice || item.product.price;
-      return acc + (price * item.quantity);
-    }, 0);
+    try {
+      // Prepare the order data
+      const orderData = {
+        customer: {
+          firstName: userName.split(" ")[0],
+          lastName: userName.split(" ").slice(1).join(" ") || "-",
+          email: userEmail,
+          address: userAddress,
+        },
+        items: cartItems.map((item) => {
+          const price = item.appliedDiscount?.finalPrice || item.product.price;
+          return {
+            productId: item.product.id,
+            quantity: item.quantity,
+            price: price,
+            discount: item.appliedDiscount
+              ? item.product.price - item.appliedDiscount.finalPrice
+              : 0,
+          };
+        }),
+        notes: `Pedido via site - ${new Date().toLocaleString("pt-BR")}`,
+      };
 
-    const message = `Pedido de ${userName}
+      // Send the order to our API
+      const response = await fetch(`${baseUrl}/orders`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(orderData),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Erro ao processar o pedido");
+      }
+
+      const result = await response.json();
+
+      // Prepare WhatsApp message as backup
+      const productList = cartItems
+        .map((item) => {
+          const price = item.appliedDiscount?.finalPrice || item.product.price;
+          return `${item.quantity}x ${item.product.name} - ${formatPrice(price * item.quantity)}`;
+        })
+        .join("\n");
+
+      const message = `Pedido de ${userName}
 Endereço: ${userAddress}
 Email: ${userEmail}
 
 Itens:
 ${productList}
 
-Total: ${formatPrice(total)}`;
+Total: ${formatPrice($totalPrice)}
 
-    window.location.href = `https://wa.me/5511999999999?text=${encodeURIComponent(message)}`;
-    clearCart();
-    closeCartModal();
+Número do pedido: ${result.orderNumber || "Processando"}`;
+
+      // Success - clear cart and close modal
+      clearCart();
+      closeCartModal();
+
+      // Redirect to WhatsApp as backup communication
+      window.open(
+        `https://wa.me/5511999999999?text=${encodeURIComponent(message)}`,
+        "_blank",
+      );
+    } catch (err) {
+      console.error("Erro no checkout:", err);
+    } finally {
+      isSubmitting = false;
+    }
   };
 </script>
 
@@ -77,21 +140,32 @@ Total: ${formatPrice(total)}`;
               <span class="item-name">{item.product.name}</span>
               {#if item.appliedDiscount}
                 <div class="discount-info">
-                  <span class="original">{formatPrice(item.appliedDiscount.originalPrice)}</span>
-                  <span class="final">{formatPrice(item.appliedDiscount.finalPrice)}</span>
+                  <span class="original"
+                    >{formatPrice(item.appliedDiscount.originalPrice)}</span
+                  >
+                  <span class="final"
+                    >{formatPrice(item.appliedDiscount.finalPrice)}</span
+                  >
                 </div>
               {:else}
                 <span class="price">{formatPrice(item.product.price)}</span>
               {/if}
             </div>
-            
+
             <div class="item-actions">
               <div class="quantity-controls">
-                <button on:click={() => decreaseQuantity(item.product.id)}>-</button>
+                <button on:click={() => decreaseQuantity(item.product.id)}
+                  >-</button
+                >
                 <span>{item.quantity}</span>
-                <button on:click={() => increaseQuantity(item.product.id)}>+</button>
+                <button on:click={() => increaseQuantity(item.product.id)}
+                  >+</button
+                >
               </div>
-              <button class="remove-btn" on:click={() => removeFromCart(item.product.id)}>
+              <button
+                class="remove-btn"
+                on:click={() => removeFromCart(item.product.id)}
+              >
                 🗑️
               </button>
             </div>
@@ -103,9 +177,17 @@ Total: ${formatPrice(total)}`;
     <div class="total-section">
       <h3>Total: {formatPrice($totalPrice)}</h3>
       {#if cartItems.length > 0 && !showUserForm}
-        <button class="checkout-btn" on:click={displayForm}>Finalizar Compra</button>
+        <button class="checkout-btn" on:click={displayForm}
+          >Finalizar Compra</button
+        >
       {/if}
     </div>
+
+    {#if error}
+      <div class="error-message">
+        {error}
+      </div>
+    {/if}
 
     {#if showUserForm}
       <form on:submit|preventDefault={checkout} class="user-form">
@@ -124,7 +206,9 @@ Total: ${formatPrice(total)}`;
           <input type="email" id="email" bind:value={userEmail} required />
         </div>
 
-        <button class="confirm-btn" type="submit">Confirmar Pedido</button>
+        <button class="confirm-btn" type="submit" disabled={isSubmitting}>
+          {isSubmitting ? "Processando..." : "Confirmar Pedido"}
+        </button>
       </form>
     {/if}
 
