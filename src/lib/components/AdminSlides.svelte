@@ -2,7 +2,8 @@
 <script lang="ts">
   import { onMount } from "svelte";
   import { config } from "$lib/services/config";
-    import ImageGallery from "./ImageGallery.svelte";
+  import ImageGallery from "./ImageGallery.svelte";
+  import type { GalleryImage } from "$lib/types/gallery";
 
   type Slide = {
     id?: string;
@@ -129,8 +130,17 @@
     showImageGallery = false;
   };
 
-  const onSelectImage = (imageUrl: string) => {
-    currentSlide.image = imageUrl;
+  // Handler para seleção de imagem da galeria
+  const onSelectImage = (image: GalleryImage | GalleryImage[]) => {
+    if (Array.isArray(image)) {
+      // Se for array, pega a primeira imagem
+      if (image.length > 0) {
+        currentSlide.image = image[0].variants.find(v => v.size === 'original')?.url || image[0].variants[0].url;
+      }
+    } else {
+      // Se for uma única imagem
+      currentSlide.image = image.variants.find(v => v.size === 'original')?.url || image.variants[0].url;
+    }
     showImageGallery = false;
   };
 </script>
@@ -201,7 +211,7 @@
             <img 
               src={currentSlide.image} 
               alt="Imagem do slide" 
-              style="max-width: 100%; max-height: 200px;" 
+              style="max-width: 100%; max-height: 200px; object-fit: cover; border-radius: 8px;" 
             />
             <button 
               type="button" 
@@ -217,23 +227,10 @@
             class="btn btn-select" 
             on:click={() => showImageGallery = true}
           >
-            Selecionar Imagem
+            Selecionar Imagem da Galeria
           </button>
         {/if}
       </div>
-      
-      {#if showImageGallery}
-        <div class="gallery-container">
-          <!-- <ImageGallery onSelectImage={onSelectImage} /> -->
-          <button 
-            type="button" 
-            class="btn btn-cancel" 
-            on:click={() => showImageGallery = false}
-          >
-            Cancelar
-          </button>
-        </div>
-      {/if}
       
       <div class="actions-row">
         <button type="submit" class="btn save" disabled={!currentSlide.image}>
@@ -319,108 +316,143 @@
   </section>
 </div>
 
+<!-- Modal da Galeria de Imagens -->
+{#if showImageGallery}
+  <div class="modal-overlay" on:click={() => showImageGallery = false}>
+    <div class="modal gallery-modal" on:click|stopPropagation>
+      <div class="modal-header">
+        <h3>Selecionar Imagem</h3>
+        <button 
+          class="close-btn" 
+          on:click={() => showImageGallery = false}
+        >
+          ×
+        </button>
+      </div>
+      
+      <div class="modal-body">
+        <ImageGallery 
+          {onSelectImage}
+          showUpload={true}
+          allowMultiSelect={false}
+          compactView={false}
+        />
+      </div>
+    </div>
+  </div>
+{/if}
+
 <style>
   .admin-slides {
-    max-width: 1000px;
-    margin: 2rem auto;
-    display: flex;
-    flex-direction: column;
-    gap: 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
   }
 
   .form-section, .list-section {
-    background: var(--beeswax);
-    padding: 1.5rem;
-    border-radius: var(--border-radius);
-    box-shadow: var(--box-shadow-small);
+    background: white;
+    border-radius: 8px;
+    padding: 2rem;
+    margin-bottom: 2rem;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  }
+
+  .slide-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
   }
 
   .field-row {
-    display: flex;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
     gap: 1rem;
-    margin-bottom: 1rem;
   }
 
   .field-group {
-    flex: 1;
     display: flex;
     flex-direction: column;
-    margin-bottom: 1rem;
-  }
-
-  .field-group label {
-    font-weight: bold;
-    margin-bottom: 0.25rem;
-  }
-
-  .field-group small {
-    color: #666;
-    font-size: 0.8rem;
-    margin-top: 0.25rem;
-  }
-
-  input, textarea {
-    padding: 0.5rem;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    font-size: 1rem;
-  }
-
-  .current-image {
-    margin: 1rem 0;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
     gap: 0.5rem;
   }
 
-  .btn {
-    padding: 0.5rem 1rem;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 0.9rem;
+  .field-group label {
+    font-weight: 600;
+    color: #374151;
   }
 
-  .btn.btn-select, .btn.btn-change {
-    background: var(--accent-color);
-    color: white;
+  .field-group input,
+  .field-group select,
+  .field-group textarea {
+    padding: 0.75rem;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    font-size: 1rem;
   }
 
-  .btn.btn-cancel {
-    background: #aaa;
-    color: white;
-    margin-top: 1rem;
+  .field-group small {
+    color: #6b7280;
+    font-size: 0.875rem;
   }
 
-  .gallery-container {
-    margin: 1rem 0;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    padding: 1rem;
-    background: white;
+  .current-image {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    align-items: flex-start;
+  }
+
+  .current-image img {
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
   }
 
   .actions-row {
     display: flex;
     gap: 1rem;
-    justify-content: flex-end;
-    margin-top: 1rem;
+    justify-content: flex-start;
   }
 
-  .btn.save {
-    background: var(--success-color);
-    color: white;
+  .btn {
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 6px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.2s;
   }
 
-  .btn.save:disabled {
-    background: #ccc;
+  .btn:disabled {
+    opacity: 0.5;
     cursor: not-allowed;
   }
 
-  .btn.cancel {
-    background: #aaa;
+  .btn.save {
+    background: #10b981;
     color: white;
+  }
+
+  .btn.save:hover:not(:disabled) {
+    background: #059669;
+  }
+
+  .btn.cancel {
+    background: #6b7280;
+    color: white;
+  }
+
+  .btn.cancel:hover {
+    background: #4b5563;
+  }
+
+  .btn.btn-select,
+  .btn.btn-change {
+    background: #3b82f6;
+    color: white;
+  }
+
+  .btn.btn-select:hover,
+  .btn.btn-change:hover {
+    background: #2563eb;
   }
 
   .slides-list {
@@ -430,95 +462,90 @@
   }
 
   .slide-item {
-    background: white;
-    border-radius: 6px;
-    padding: 1rem;
-    box-shadow: var(--box-shadow-small);
     display: flex;
+    align-items: center;
     gap: 1rem;
-    position: relative;
+    padding: 1rem;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    background: #f9fafb;
   }
 
   .order-indicator {
+    background: #3b82f6;
+    color: white;
+    width: 2rem;
+    height: 2rem;
+    border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    background: var(--primary-color);
-    color: white;
-    width: 30px;
-    height: 30px;
-    border-radius: 50%;
     font-weight: bold;
   }
 
   .slide-content {
-    flex: 1;
     display: flex;
     gap: 1rem;
-  }
-
-  .slide-image {
-    width: 200px;
-    height: 100px;
-    overflow: hidden;
-    border-radius: 4px;
+    flex: 1;
   }
 
   .slide-image img {
-    width: 100%;
-    height: 100%;
+    width: 80px;
+    height: 60px;
     object-fit: cover;
-  }
-
-  .slide-details {
-    flex: 1;
+    border-radius: 4px;
   }
 
   .slide-details h3 {
-    margin: 0 0 0.5rem;
+    margin: 0 0 0.5rem 0;
+    color: #1f2937;
   }
 
   .subtitle {
-    color: #555;
-    margin-bottom: 0.5rem;
+    color: #6b7280;
+    margin: 0 0 0.5rem 0;
   }
 
   .button-info {
-    font-size: 0.9rem;
-    color: #666;
+    font-size: 0.875rem;
+    color: #374151;
+    margin: 0;
   }
 
   .button-text {
-    color: var(--primary-color);
-    font-weight: bold;
+    font-weight: 600;
+    color: #3b82f6;
   }
 
   .button-link {
-    color: var(--accent-color);
-    font-style: italic;
+    font-family: monospace;
+    background: #f3f4f6;
+    padding: 0.125rem 0.25rem;
+    border-radius: 3px;
   }
 
   .slide-actions {
     display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    gap: 0.5rem;
+    gap: 1rem;
   }
 
   .order-buttons {
     display: flex;
-    gap: 0.5rem;
+    flex-direction: column;
+    gap: 0.25rem;
   }
 
   .order-btn {
-    padding: 0.25rem 0.5rem;
-    background: #f0f0f0;
-    border: 1px solid #ddd;
+    width: 2rem;
+    height: 1.5rem;
+    padding: 0;
+    background: #e5e7eb;
+    color: #374151;
+    font-size: 0.875rem;
   }
 
-  .order-btn:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
+  .order-btn:hover:not(:disabled) {
+    background: #d1d5db;
   }
 
   .action-buttons {
@@ -527,32 +554,114 @@
   }
 
   .btn.edit {
-    background: var(--accent-color);
+    background: #f59e0b;
     color: white;
+    padding: 0.5rem 0.75rem;
+    font-size: 0.875rem;
+  }
+
+  .btn.edit:hover {
+    background: #d97706;
   }
 
   .btn.delete {
-    background: var(--danger-color);
+    background: #ef4444;
     color: white;
+    padding: 0.5rem 0.75rem;
+    font-size: 0.875rem;
+  }
+
+  .btn.delete:hover {
+    background: #dc2626;
   }
 
   .no-items {
     text-align: center;
+    color: #6b7280;
+    font-style: italic;
     padding: 2rem;
-    color: #666;
+  }
+
+  /* Modal styles */
+  .modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+  }
+
+  .modal {
+    background: white;
+    border-radius: 8px;
+    max-width: 90vw;
+    max-height: 90vh;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .gallery-modal {
+    width: 1000px;
+  }
+
+  .modal-header {
+    padding: 1rem 1.5rem;
+    border-bottom: 1px solid #e5e7eb;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .modal-header h3 {
+    margin: 0;
+    color: #1f2937;
+  }
+
+  .close-btn {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: #6b7280;
+    width: 2rem;
+    height: 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .close-btn:hover {
+    color: #374151;
+  }
+
+  .modal-body {
+    padding: 1.5rem;
+    overflow-y: auto;
+    flex: 1;
   }
 
   @media (max-width: 768px) {
     .field-row {
-      flex-direction: column;
+      grid-template-columns: 1fr;
     }
     
     .slide-content {
       flex-direction: column;
     }
     
-    .slide-image {
-      width: 100%;
+    .slide-actions {
+      flex-direction: column;
+      align-items: stretch;
+    }
+    
+    .gallery-modal {
+      width: 95vw;
     }
   }
 </style>

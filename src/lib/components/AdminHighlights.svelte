@@ -163,7 +163,7 @@
         {/if}
       </div>
       
-      <!-- FIXME: Remove ImageGallery -->
+      
       {#if showImageGallery}
         <div class="gallery-container">
           <!-- <ImageGallery onSelectImage={onSelectImage} /> -->
