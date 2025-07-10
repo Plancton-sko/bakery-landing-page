@@ -1,19 +1,29 @@
 // src/lib/types/Product.ts
-
 import type { Categories } from "$lib/enums/Categories";
 import type { Writable } from "svelte/store";
 import type { Picture } from "vite-imagetools";
+
+export type ProductImage = {
+  id: string;
+  format: 'avif' | 'webp' | 'jpeg';
+  size: 'thumbnail' | 'small' | 'medium' | 'large' | 'original';
+  url: string;
+  width: number;
+  height: number;
+  fileSize: number;
+  quality: number;
+};
 
 export type Product = {
   id: string;
   name: string;
   price: number;
   category: Categories;
-  image: string | Picture; // String para base64 ou outros formatos
-  imagePath?: Picture; // Campo opcional para o Picture gerado
+  image: string | Picture; // usada como fallback
+  imagePath?: Picture;
   description: string;
+  images?: ProductImage[]; // imagens otimizadas vindas do backend
 };
-
 
 export type ProductStore = Writable<Product[]> & {
   fetchProducts: () => Promise<void>;

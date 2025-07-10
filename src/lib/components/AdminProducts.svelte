@@ -12,6 +12,7 @@
 
   let fileInput: HTMLInputElement;
   let dragOver = false;
+  let selectedFile: File | null = null;
 
   const baseUrl = config.baseUrl;
 
@@ -45,39 +46,92 @@
   };
 
   const handleSubmit = async () => {
-    const method = isEditing ? "PUT" : "POST";
-    const url = isEditing
-      ? `${baseUrl}/products/${currentProduct.id}`
-      : `${baseUrl}/products`;
     try {
-      const res = await fetch(url, {
-        method,
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",
-        body: JSON.stringify(currentProduct),
-      });
-      if (res.ok) {
-        const saved = await res.json();
-        if (!isEditing) {
-          // após criação, já seleciona para upload
-          currentProduct = saved;
-          isEditing = true;
+      if (isEditing) {
+        // Modo edição - atualiza produto existente
+        const res = await fetch(`${baseUrl}/products/${currentProduct.id}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          credentials: "include",
+          body: JSON.stringify(currentProduct),
+        });
+        
+        if (res.ok) {
+          const updated = await res.json();
+          currentProduct = updated;
+          
+          // Se há arquivo selecionado, faz upload da imagem
+          if (selectedFile) {
+            await handleImageUpload(selectedFile);
+          }
+          
+          await fetchProducts(currentPage);
         } else {
-          // Atualiza o currentProduct com a resposta do servidor
-          currentProduct = saved;
+          console.error(await res.text());
         }
-        await fetchProducts(currentPage);
       } else {
-        console.error(await res.text());
+        // Modo criação - SEMPRE precisa de imagem
+        if (!selectedFile) {
+          alert("Por favor, selecione uma imagem para o produto.");
+          return;
+        }
+        
+        await createProduct();
       }
     } catch (err) {
       console.error("Erro ao salvar produto:", err);
     }
   };
 
+  const createProduct = async () => {
+    const formData = new FormData();
+    
+    // Adiciona os dados do produto
+    formData.append("name", currentProduct.name || "");
+    formData.append("category", currentProduct.category || "");
+    formData.append("description", currentProduct.description || "");
+    formData.append("price", currentProduct.price?.toString() || "0");
+    
+    // Adiciona o arquivo de imagem (obrigatório)
+    if (selectedFile) {
+      formData.append("file", selectedFile);
+    }
+
+    try {
+      const res = await fetch(`${baseUrl}/products`, {
+        method: "POST",
+        credentials: "include",
+        body: formData,
+      });
+
+      if (res.ok) {
+        const saved = await res.json();
+        currentProduct = saved;
+        selectedFile = null;
+        if (fileInput) fileInput.value = "";
+        await fetchProducts(currentPage);
+        alert("Produto criado com sucesso!");
+        resetForm();
+      } else {
+        const errorText = await res.text();
+        console.error("Erro ao criar produto:", errorText);
+        alert(`Erro ao criar produto: ${errorText}`);
+      }
+    } catch (err) {
+      console.error("Erro ao criar produto:", err);
+      alert("Erro ao criar produto. Verifique o console para mais detalhes.");
+    }
+  };
+
   const handleImageUpload = async (file: File) => {
+    if (!currentProduct.id) {
+      console.error("ID do produto não encontrado");
+      return;
+    }
+
     const formData = new FormData();
     formData.append("file", file);
+    
     try {
       const res = await fetch(
         `${baseUrl}/products/${currentProduct.id}/upload`,
@@ -90,8 +144,9 @@
       if (res.ok) {
         const updated = await res.json();
         products = products.map((p) => (p.id === updated.id ? updated : p));
-        // Atualiza o currentProduct com a nova imagem
         currentProduct = updated;
+        selectedFile = null;
+        if (fileInput) fileInput.value = "";
         alert("Imagem atualizada!");
       } else {
         console.error(await res.text());
@@ -101,12 +156,33 @@
     }
   };
 
+  const handleFileSelect = (file: File) => {
+    // Valida o tipo de arquivo
+    if (!file.type.match(/^image\/(jpeg|jpg|png|gif|webp|avif)$/)) {
+      alert("Por favor, selecione apenas arquivos de imagem (JPEG, PNG, GIF, WebP, AVIF).");
+      return;
+    }
+    
+    // Valida o tamanho do arquivo (10MB)
+    if (file.size > 10 * 1024 * 1024) {
+      alert("O arquivo deve ter no máximo 10MB.");
+      return;
+    }
+
+    selectedFile = file;
+    dragOver = false;
+    
+    // Se estamos editando um produto existente, faz upload imediatamente
+    if (isEditing && currentProduct.id) {
+      handleImageUpload(file);
+    }
+  };
+
   const onDrop = (event: DragEvent) => {
     event.preventDefault();
-    dragOver = false;
     const file = event.dataTransfer?.files?.[0];
-    if (file && currentProduct.id) {
-      handleImageUpload(file);
+    if (file) {
+      handleFileSelect(file);
     }
   };
 
@@ -123,6 +199,7 @@
     currentProduct = {};
     isEditing = false;
     dragOver = false;
+    selectedFile = null;
     if (fileInput) fileInput.value = "";
   };
 
@@ -136,11 +213,11 @@
     <form on:submit|preventDefault={handleSubmit} class="product-form">
       <div class="field-row">
         <div class="field-group">
-          <label>Nome</label>
+          <label>Nome *</label>
           <input type="text" bind:value={currentProduct.name} required />
         </div>
         <div class="field-group">
-          <label>Categoria</label>
+          <label>Categoria *</label>
           <select bind:value={currentProduct.category} required>
             <option disabled value="">Selecione</option>
             <option value="bread">Pão</option>
@@ -151,12 +228,12 @@
         </div>
       </div>
       <div class="field-group">
-        <label>Descrição</label>
+        <label>Descrição *</label>
         <textarea bind:value={currentProduct.description} rows="2" required />
       </div>
       <div class="field-row">
         <div class="field-group">
-          <label>Preço</label>
+          <label>Preço *</label>
           <input
             type="number"
             step="0.01"
@@ -166,6 +243,7 @@
           />
         </div>
       </div>
+      
       {#if isEditing && currentProduct.image}
         <div class="current-image">
           <p>Imagem atual:</p>
@@ -176,6 +254,14 @@
           />
         </div>
       {/if}
+      
+      {#if selectedFile && !isEditing}
+        <div class="selected-file">
+          <p>Arquivo selecionado: {selectedFile.name}</p>
+          <p>Tamanho: {(selectedFile.size / 1024 / 1024).toFixed(2)} MB</p>
+        </div>
+      {/if}
+      
       <div class="drop-zone-div">
         <button
           type="button"
@@ -189,26 +275,31 @@
           <p>
             {dragOver
               ? "Solte a imagem aqui"
-              : "Arraste ou clique para enviar imagem"}
+              : isEditing
+              ? "Arraste ou clique para alterar imagem"
+              : "Arraste ou clique para enviar imagem *"}
           </p>
           <input
             type="file"
             bind:this={fileInput}
             accept="image/*"
-            on:change={() =>
-              fileInput.files?.[0] && handleImageUpload(fileInput.files[0])}
+            on:change={() => {
+              const file = fileInput.files?.[0];
+              if (file) handleFileSelect(file);
+            }}
             style="display: none;"
           />
         </button>
       </div>
+      
       <div class="actions-row">
-        <button type="submit" class="btn save"
-          >{isEditing ? "Atualizar Produto" : "Adicionar Produto"}</button
-        >
+        <button type="submit" class="btn save">
+          {isEditing ? "Atualizar Produto" : "Criar Produto"}
+        </button>
         {#if isEditing}
-          <button type="button" on:click={resetForm} class="btn cancel"
-            >Cancelar</button
-          >
+          <button type="button" on:click={resetForm} class="btn cancel">
+            Cancelar
+          </button>
         {/if}
       </div>
     </form>
@@ -231,6 +322,7 @@
               on:click={() => {
                 currentProduct = { ...product };
                 isEditing = true;
+                selectedFile = null;
               }}
               class="btn edit">✎ Editar</button
             >

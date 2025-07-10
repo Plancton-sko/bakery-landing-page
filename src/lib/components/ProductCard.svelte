@@ -1,6 +1,7 @@
 <!-- src/lib/components/ProductCard.svelte -->
 <script lang="ts">
-  import type { Product } from "$lib/types/Product";
+  import { onMount } from "svelte";
+  import type { Product, ProductImage } from "$lib/types/Product";
   import Modal from "$lib/components/Modal.svelte";
   import BottomSheet from "$lib/components/BottomSheet.svelte";
   import { addToCart, isCartOpen } from "$lib/stores/cart";
@@ -16,11 +17,6 @@
   let isMobile = false;
   let discountInfo = calculateDiscounts(product, activeDiscounts);
 
-  console.log(product);
-
-  // Check screen size on mount
-  import { onMount } from "svelte";
-    import type { Picture } from "vite-imagetools";
   onMount(() => {
     isMobile = window.innerWidth <= 768;
     window.addEventListener("resize", () => {
@@ -43,15 +39,22 @@
     closeModal();
   };
 
-  let isExternal = false;
+  const getSrcSet = (format: string) => {
+    return product.images
+      ?.filter(img => img.format === format)
+      .map(img => `${img.url}?auto=compress&cs=tinysrgb&w=${img.width}&dpr=1 ${img.width}w`)
+      .join(', ') ?? '';
+  };
 
-  let imageUrl: string | Picture;
-  if (typeof product.image === "string") {
-    isExternal = true;
-  } else {
-    isExternal = false;
-  }
- 
+  const getDefaultImage = () => {
+    const preferred = product.images?.find(img => img.format === 'avif' && img.size === 'medium');
+    return preferred ? `${preferred.url}?auto=compress&cs=tinysrgb&w=800&dpr=1` : (typeof product.image === 'string' ? product.image : "/placeholder.jpg");
+  };
+
+  $: srcSetAvif = getSrcSet('avif');
+  $: srcSetWebp = getSrcSet('webp');
+  $: srcSetJpeg = getSrcSet('jpeg');
+  $: fallbackImage = getDefaultImage();
 </script>
 
 <button
@@ -69,32 +72,25 @@
     </div>
   {/if}
 
-  {#if isExternal}
-  <!-- Renderiza imagem externa sem transformações -->
-  <img
-    src={product.image as string}
-    alt={product.name}
-    loading="lazy"
-    decoding="async"
-  />
-{:else}
-  <!-- Processa imagens locais com enhanced:img -->
-  <enhanced:img
-    src={product.image}
-    alt={product.name}
-    srcset="
-      {product.image}?w=400&q=80&format=webp 400w,
-      {product.image}?w=800&q=80&format=webp 800w,
-      {product.image}?w=1200&q=80&format=webp 1200w
-    "
-    sizes="(max-width: 640px) 100vw,
-      (max-width: 1024px) 90vw,
-      (max-width: 1280px) 85vw,
-      80vw"
-    loading="lazy"
-    decoding="async"
-  />
-{/if}
+  <picture>
+    {#if srcSetAvif}
+      <source srcset={srcSetAvif} type="image/avif" />
+    {/if}
+    {#if srcSetWebp}
+      <source srcset={srcSetWebp} type="image/webp" />
+    {/if}
+    {#if srcSetJpeg}
+      <source srcset={srcSetJpeg} type="image/jpeg" />
+    {/if}
+    <img
+      src={fallbackImage}
+      alt={product.name}
+      loading="lazy"
+      decoding="async"
+      sizes="(max-width: 640px) 100vw, (max-width: 1024px) 80vw, 50vw"
+    />
+  </picture>
+
   <h3>{product.name}</h3>
 
   <div class="price-container">
@@ -112,56 +108,30 @@
     <div class="bottomSheet-content">
       <h2>{product.name}</h2>
       <p>{product.description}</p>
-      <!-- <enhanced:img
-        src={product.image}
-        alt={product.name}
-        srcset="
-    {product.image}?w=400&q=80&format=webp 400w,
-    {product.image}?w=800&q=80&format=webp 800w,
-    {product.image}?w=1200&q=80&format=webp 1200w
-  "
-        sizes="(max-width: 640px) 100vw,
-        (max-width: 1024px) 90vw,
-        (max-width: 1280px) 85vw,
-        80vw"
-        loading="lazy"
-        decoding="async"
-        class="imgBottomSheet"
-      /> -->
-      {#if isExternal}
-  <!-- Renderiza imagem externa sem transformações -->
-  <img
-    src={product.image as string}
-    alt={product.name}
-    loading="lazy"
-    decoding="async"
-    class="imgBottomSheet"
-  />
-{:else}
-  <!-- Processa imagens locais com enhanced:img -->
-  <enhanced:img
-    src={product.image}
-    alt={product.name}
-    srcset="
-      {product.image}?w=400&q=80&format=webp 400w,
-      {product.image}?w=800&q=80&format=webp 800w,
-      {product.image}?w=1200&q=80&format=webp 1200w
-    "
-    sizes="(max-width: 640px) 100vw,
-      (max-width: 1024px) 90vw,
-      (max-width: 1280px) 85vw,
-      80vw"
-    loading="lazy"
-    decoding="async"
-    class="imgBottomSheet"
-  />
-{/if}
+
+      <picture>
+        {#if srcSetAvif}
+          <source srcset={srcSetAvif} type="image/avif" />
+        {/if}
+        {#if srcSetWebp}
+          <source srcset={srcSetWebp} type="image/webp" />
+        {/if}
+        {#if srcSetJpeg}
+          <source srcset={srcSetJpeg} type="image/jpeg" />
+        {/if}
+        <img
+          src={fallbackImage}
+          alt={product.name}
+          loading="lazy"
+          decoding="async"
+          sizes="100vw"
+          class="imgBottomSheet"
+        />
+      </picture>
 
       <div class="modal-price">
         {#if discountInfo}
-          <p class="original-price">
-            {formatPrice(discountInfo.originalPrice)}
-          </p>
+          <p class="original-price">{formatPrice(discountInfo.originalPrice)}</p>
           <p class="discounted-price">{formatPrice(discountInfo.finalPrice)}</p>
         {:else}
           <p>{formatPrice(product.price)}</p>
@@ -187,56 +157,30 @@
     <div class="modal-content">
       <h2>{product.name}</h2>
       <p>{product.description}</p>
-      <!-- <enhanced:img
-        src={product.imagePath ?? product.image}
-        alt={product.name}
-        srcset="
-    {product.image}?w=400&q=80&format=webp 400w,
-    {product.image}?w=800&q=80&format=webp 800w,
-    {product.image}?w=1200&q=80&format=webp 1200w
-  "
-        sizes="(max-width: 640px) 100vw,
-        (max-width: 1024px) 90vw,
-        (max-width: 1280px) 85vw,
-        80vw"
-        loading="lazy"
-        decoding="async"
-        class="imgModal"
-      /> -->
-      {#if isExternal}
-  <!-- Renderiza imagem externa sem transformações -->
-  <img
-    src={product.image as string}
-    alt={product.name}
-    loading="lazy"
-    decoding="async"
-    class="imgModal"
-  />
-{:else}
-  <!-- Processa imagens locais com enhanced:img -->
-  <enhanced:img
-    src={product.image}
-    alt={product.name}
-    srcset="
-      {product.image}?w=400&q=80&format=webp 400w,
-      {product.image}?w=800&q=80&format=webp 800w,
-      {product.image}?w=1200&q=80&format=webp 1200w
-    "
-    sizes="(max-width: 640px) 100vw,
-      (max-width: 1024px) 90vw,
-      (max-width: 1280px) 85vw,
-      80vw"
-    loading="lazy"
-    decoding="async"
-    class="imgModal"
-  />
-{/if}
+
+      <picture>
+        {#if srcSetAvif}
+          <source srcset={srcSetAvif} type="image/avif" />
+        {/if}
+        {#if srcSetWebp}
+          <source srcset={srcSetWebp} type="image/webp" />
+        {/if}
+        {#if srcSetJpeg}
+          <source srcset={srcSetJpeg} type="image/jpeg" />
+        {/if}
+        <img
+          src={fallbackImage}
+          alt={product.name}
+          loading="lazy"
+          decoding="async"
+          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 80vw, 50vw"
+          class="imgModal"
+        />
+      </picture>
 
       <div class="modal-price">
         {#if discountInfo}
-          <p class="original-price">
-            {formatPrice(discountInfo.originalPrice)}
-          </p>
+          <p class="original-price">{formatPrice(discountInfo.originalPrice)}</p>
           <p class="discounted-price">{formatPrice(discountInfo.finalPrice)}</p>
         {:else}
           <p>{formatPrice(product.price)}</p>

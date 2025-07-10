@@ -1,6 +1,7 @@
 // src/lib/stores/products
 import { writable, type Writable } from 'svelte/store';
 import type { Product, ProductStore } from '$lib/types/Product';
+import { config } from '$lib/services/config';
 
 // Função para criar a store de produtos
 function createProductsStore(): ProductStore {
@@ -9,7 +10,9 @@ function createProductsStore(): ProductStore {
   // Função para buscar produtos da API (GET)
   async function fetchProducts() {
     try {
-      const response = await fetch('/api/products');
+      const response = await fetch(`${config.baseUrl}/products`, {
+                  credentials: 'include'
+              });
       if (!response.ok) throw new Error('Erro ao buscar produtos.');
       const data: Product[] = await response.json();
       set(data);
@@ -21,10 +24,11 @@ function createProductsStore(): ProductStore {
   // Função para adicionar um produto (POST)
   async function addProduct(product: Product) {
     try {
-      const response = await fetch('/api/products', {
+      const response = await fetch(`${config.baseUrl}/products`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(product),
+        credentials: 'include'
       });
 
       if (!response.ok) throw new Error('Erro ao adicionar produto.');
@@ -38,7 +42,7 @@ function createProductsStore(): ProductStore {
   // Função para atualizar um produto (PUT)
   async function updateProduct(updatedProduct: Product) {
     try {
-      const response = await fetch(`/api/products/${updatedProduct.id}`, {
+      const response = await fetch(`${config.baseUrl}/products/${updatedProduct.id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(updatedProduct),
@@ -58,7 +62,7 @@ function createProductsStore(): ProductStore {
   // Função para deletar um produto (DELETE)
   async function deleteProduct(id: string) {
     try {
-      const response = await fetch(`/api/products/${id}`, {
+      const response = await fetch(`${config.baseUrl}/products/${id}`, {
         method: 'DELETE',
       });
 

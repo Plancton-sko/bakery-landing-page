@@ -1,399 +1,513 @@
-<!-- src/lib/components/AdminHighlights.svelte -->
+<!--src/routes/admin/highlights/+page.svelte-->
 <script lang="ts">
-  import { onMount } from "svelte";
-  import { config } from "$lib/services/config";
-  import type { Product } from "$lib/types/Product";
+    import { onMount } from "svelte";
+    import type { Product } from "$lib/types/Product";
+    import type { Highlight } from "$lib/types/Highlight";
+    import { goto } from "$app/navigation";
+    import { page } from "$app/stores";
+    import { config } from '$lib/services/config';
 
-  type Highlight = {
-    id?: string;
-    title: string;
-    description: string;
-    image: string;
-    productId?: string;
-  };
+    import {
+        highlights,
+        highlightsLoading,
+        highlightsError,
+        highlightsSuccess,
+        fetchHighlights,
+        saveHighlights,
+        removeHighlight,
+        clearMessages,
+    } from "$lib/stores/highlightsStore";
 
-  let highlights: Highlight[] = [];
-  let currentHighlight: Partial<Highlight> = {};
-  let isEditing = false;
-  let showImageGallery = false;
-  let products: Product[] = [];
-  
-  const baseUrl = config.baseUrl;
+    let products: Product[] = [];
+    let highlightsData: Highlight[] = [];
+    let selectedProducts: Set<string> = new Set();
+    let loading = false;
+    let error = "";
+    let success = "";
 
-  onMount(async () => {
-    await Promise.all([fetchHighlights(), fetchProducts()]);
-  });
+    // Reatividade dos stores
+    $: loading = $highlightsLoading;
+    $: error = $highlightsError;
+    $: success = $highlightsSuccess;
+    $: highlightsData = $highlights;
+    $: selectedProducts = new Set(highlightsData.map((h) => h.id));
 
-  const fetchHighlights = async () => {
-    try {
-      const res = await fetch(`${baseUrl}/highlights`, {
-        credentials: "include",
-      });
-      if (!res.ok) throw new Error(await res.text());
-      highlights = await res.json();
-    } catch (err) {
-      console.error("Erro ao buscar destaques:", err);
+    const baseUrl = config.baseUrl;
+
+    onMount(async () => {
+        await loadData();
+    });
+
+    async function loadData() {
+        try {
+            clearMessages();
+            const productsRes = await fetch(`${baseUrl}/products`, {
+                credentials: "include",
+            });
+
+            if (!productsRes.ok) {
+                throw new Error("Erro ao carregar produtos");
+            }
+
+            products = await productsRes.json();
+            await fetchHighlights();
+        } catch (err) {
+            console.error("Erro ao carregar dados:", err);
+        }
     }
-  };
 
-  const fetchProducts = async () => {
-    try {
-      const res = await fetch(`${baseUrl}/products?all=true`, {
-        credentials: "include",
-      });
-      if (!res.ok) throw new Error(await res.text());
-      products = await res.json();
-    } catch (err) {
-      console.error("Erro ao buscar produtos:", err);
+    function toggleProduct(productId: string) {
+        if (selectedProducts.has(productId)) {
+            selectedProducts.delete(productId);
+        } else {
+            selectedProducts.add(productId);
+        }
+        selectedProducts = selectedProducts; // Trigger reactivity
     }
-  };
 
-  const handleSubmit = async () => {
-    const method = isEditing ? "PUT" : "POST";
-    const url = isEditing
-      ? `${baseUrl}/highlights/${currentHighlight.id}`
-      : `${baseUrl}/highlights`;
-    
-    try {
-      const res = await fetch(url, {
-        method,
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",
-        body: JSON.stringify(currentHighlight),
-      });
-      
-      if (!res.ok) throw new Error(await res.text());
-      
-      await fetchHighlights();
-      resetForm();
-    } catch (err) {
-      console.error("Erro ao salvar destaque:", err);
+    async function saveHighlightsData() {
+        try {
+            clearMessages();
+            const highlightData = Array.from(selectedProducts).map(
+                (productId) => {
+                    const product = products.find((p) => p.id === productId);
+                    return {
+                        id: productId,
+                        name: product?.name || "",
+                        price: product?.price || 0,
+                        image: product?.image || "",
+                        description: product?.description,
+                        isActive: false,
+                    };
+                },
+            );
+
+            await saveHighlights(highlightData);
+        } catch (err) {
+            console.error("Erro ao salvar highlights:", err);
+        }
     }
-  };
 
-  const deleteHighlight = async (id: string) => {
-    if (!confirm("Tem certeza que deseja excluir este destaque?")) return;
-    
-    try {
-      const res = await fetch(`${baseUrl}/highlights/${id}`, {
-        method: "DELETE",
-        credentials: "include",
-      });
-      
-      if (!res.ok) throw new Error(await res.text());
-      
-      await fetchHighlights();
-    } catch (err) {
-      console.error("Erro ao excluir destaque:", err);
+    async function removeHighlightData(highlightId: string) {
+        try {
+            clearMessages();
+            await removeHighlight(highlightId);
+        } catch (err) {
+            console.error("Erro ao remover highlight:", err);
+        }
     }
-  };
 
-  const resetForm = () => {
-    currentHighlight = {};
-    isEditing = false;
-    showImageGallery = false;
-  };
-
-  const onSelectImage = (imageUrl: string) => {
-    currentHighlight.image = imageUrl;
-    showImageGallery = false;
-  };
+    function formatPrice(price: number): string {
+        return (price / 100).toFixed(2);
+    }
 </script>
 
+<svelte:head>
+    <title>Gerenciar Highlights - Admin</title>
+</svelte:head>
+
 <div class="admin-highlights">
-  <section class="form-section">
-    <h2>{isEditing ? "Editar Destaque" : "Novo Destaque"}</h2>
-    
-    <form on:submit|preventDefault={handleSubmit} class="highlight-form">
-      <div class="field-group">
-        <label for="title">Título</label>
-        <input 
-          type="text" 
-          id="title" 
-          bind:value={currentHighlight.title} 
-          required 
-        />
-      </div>
-      
-      <div class="field-group">
-        <label for="description">Descrição</label>
-        <textarea 
-          id="description" 
-          bind:value={currentHighlight.description} 
-          rows="3" 
-          required 
-        ></textarea>
-      </div>
-      
-      <div class="field-group">
-        <label for="product">Produto Relacionado (opcional)</label>
-        <select id="product" bind:value={currentHighlight.productId}>
-          <option value="">Nenhum</option>
-          {#each products as product}
-            <option value={product.id}>{product.name}</option>
-          {/each}
-        </select>
-      </div>
-      
-      <div class="field-group">
-        <label>Imagem</label>
-        {#if currentHighlight.image}
-          <div class="current-image">
-            <img 
-              src={currentHighlight.image} 
-              alt="Imagem do destaque" 
-              style="max-width: 300px; max-height: 200px;" 
-            />
-            <button 
-              type="button" 
-              class="btn btn-change" 
-              on:click={() => showImageGallery = true}
-            >
-              Alterar Imagem
-            </button>
-          </div>
-        {:else}
-          <button 
-            type="button" 
-            class="btn btn-select" 
-            on:click={() => showImageGallery = true}
-          >
-            Selecionar Imagem
-          </button>
-        {/if}
-      </div>
-      
-      
-      {#if showImageGallery}
-        <div class="gallery-container">
-          <!-- <ImageGallery onSelectImage={onSelectImage} /> -->
-          <button 
-            type="button" 
-            class="btn btn-cancel" 
-            on:click={() => showImageGallery = false}
-          >
-            Cancelar
-          </button>
+    <div class="header">
+        <h1>Gerenciar Highlights</h1>
+        <p>
+            Selecione os produtos que devem aparecer como destaque na seção "Hot
+            Deals"
+        </p>
+    </div>
+
+    {#if error}
+        <div class="alert error">
+            {error}
         </div>
-      {/if}
-      
-      <div class="actions-row">
-        <button type="submit" class="btn save" disabled={!currentHighlight.image}>
-          {isEditing ? "Atualizar Destaque" : "Adicionar Destaque"}
-        </button>
-        {#if isEditing}
-          <button type="button" on:click={resetForm} class="btn cancel">
-            Cancelar
-          </button>
-        {/if}
-      </div>
-    </form>
-  </section>
-  
-  <section class="list-section">
-    <h2>Destaques Cadastrados</h2>
-    
-    {#if highlights.length === 0}
-      <p class="no-items">Nenhum destaque cadastrado ainda.</p>
-    {:else}
-      <div class="highlights-grid">
-        {#each highlights as highlight}
-          <div class="highlight-card">
-            <div class="image-container">
-              <img src={highlight.image} alt={highlight.title} />
-            </div>
-            <div class="card-body">
-              <h3>{highlight.title}</h3>
-              <p class="description">{highlight.description}</p>
-              {#if highlight.productId}
-                <p class="product-linked">
-                  Produto vinculado: {products.find(p => p.id === highlight.productId)?.name || 'Não encontrado'}
-                </p>
-              {/if}
-            </div>
-            <div class="card-actions">
-              <button 
-                on:click={() => {
-                  currentHighlight = { ...highlight };
-                  isEditing = true;
-                }} 
-                class="btn edit"
-              >
-                ✎ Editar
-              </button>
-              <button 
-                on:click={() => deleteHighlight(highlight.id as string)} 
-                class="btn delete"
-              >
-                🗑️
-              </button>
-            </div>
-          </div>
-        {/each}
-      </div>
     {/if}
-  </section>
+
+    {#if success}
+        <div class="alert success">
+            {success}
+        </div>
+    {/if}
+
+    {#if loading}
+        <div class="loading">
+            <div class="spinner"></div>
+            <p>Carregando...</p>
+        </div>
+    {:else}
+        <div class="content">
+            <!-- Highlights Atuais -->
+            <div class="current-highlights">
+                <h2>Highlights Atuais ({highlightsData.length})</h2>
+                {#if highlightsData.length > 0}
+                    <div class="highlights-grid">
+                        {#each highlightsData as highlight}
+                            <div class="highlight-card current">
+                                <div class="image-container">
+                                    <enhanced:img
+                                        src={highlight.image}
+                                        alt={highlight.name}
+                                        class="product-image"
+                                    />
+                                </div>
+                                <div class="card-content">
+                                    <h3>{highlight.name}</h3>
+                                    <p class="price">
+                                        R$ {formatPrice(highlight.price)}
+                                    </p>
+                                    {#if highlight.description}
+                                        <p class="description">
+                                            {highlight.description}
+                                        </p>
+                                    {/if}
+                                </div>
+                                <button
+                                    class="remove-btn"
+                                    on:click={() =>
+                                        removeHighlightData(highlight.id)}
+                                    disabled={loading}
+                                >
+                                    ✕
+                                </button>
+                            </div>
+                        {/each}
+                    </div>
+                {:else}
+                    <div class="empty-state">
+                        <p>Nenhum highlight configurado</p>
+                    </div>
+                {/if}
+            </div>
+
+            <!-- Seleção de Produtos -->
+            <div class="product-selection">
+                <h2>Selecionar Produtos</h2>
+                <div class="selection-info">
+                    <p>{selectedProducts.size} produto(s) selecionado(s)</p>
+                    <button
+                        class="save-btn"
+                        on:click={saveHighlightsData}
+                        disabled={loading || selectedProducts.size === 0}
+                    >
+                        Salvar Highlights
+                    </button>
+                </div>
+
+                <div class="products-grid">
+                    {#each products as product}
+                        <div
+                            class="product-card"
+                            class:selected={selectedProducts.has(product.id)}
+                            on:click={() => toggleProduct(product.id)}
+                        >
+                            <div class="image-container">
+                                <enhanced:img
+                                    src={product.image}
+                                    alt={product.name}
+                                    class="product-image"
+                                />
+                                <div class="selection-indicator">
+                                    {#if selectedProducts.has(product.id)}
+                                        <div class="check-icon">✓</div>
+                                    {/if}
+                                </div>
+                            </div>
+                            <div class="card-content">
+                                <h3>{product.name}</h3>
+                                <p class="price">
+                                    R$ {formatPrice(product.price)}
+                                </p>
+                                <p class="category">{product.category}</p>
+                            </div>
+                        </div>
+                    {/each}
+                </div>
+            </div>
+        </div>
+    {/if}
 </div>
 
 <style>
-  .admin-highlights {
-    max-width: 1000px;
-    margin: 2rem auto;
-    display: flex;
-    flex-direction: column;
-    gap: 2rem;
-  }
+    .admin-highlights {
+        padding: 2rem;
+        max-width: 1400px;
+        margin: 0 auto;
+    }
 
-  .form-section, .list-section {
-    background: var(--beeswax);
-    padding: 1.5rem;
-    border-radius: var(--border-radius);
-    box-shadow: var(--box-shadow-small);
-  }
+    .header {
+        margin-bottom: 2rem;
+        text-align: center;
+    }
 
-  .field-group {
-    margin-bottom: 1rem;
-  }
+    .header h1 {
+        color: var(--primary-color);
+        font-size: 2.5rem;
+        margin-bottom: 0.5rem;
+    }
 
-  .field-group label {
-    display: block;
-    font-weight: bold;
-    margin-bottom: 0.25rem;
-  }
+    .header p {
+        color: var(--text-color);
+        font-size: 1.1rem;
+    }
 
-  input, textarea, select {
-    width: 100%;
-    padding: 0.5rem;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    font-size: 1rem;
-  }
+    .alert {
+        padding: 1rem;
+        border-radius: 8px;
+        margin-bottom: 1rem;
+        font-weight: 500;
+    }
 
-  .current-image {
-    margin: 1rem 0;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 0.5rem;
-  }
+    .alert.error {
+        background-color: #fee;
+        color: #c33;
+        border: 1px solid #fcc;
+    }
 
-  .btn {
-    padding: 0.5rem 1rem;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 0.9rem;
-  }
+    .alert.success {
+        background-color: #efe;
+        color: #373;
+        border: 1px solid #cfc;
+    }
 
-  .btn.btn-select, .btn.btn-change {
-    background: var(--accent-color);
-    color: white;
-  }
+    .loading {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 3rem;
+        gap: 1rem;
+    }
 
-  .btn.btn-cancel {
-    background: #aaa;
-    color: white;
-    margin-top: 1rem;
-  }
+    .spinner {
+        width: 40px;
+        height: 40px;
+        border: 4px solid #f3f3f3;
+        border-top: 4px solid var(--primary-color);
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+    }
 
-  .gallery-container {
-    margin: 1rem 0;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    padding: 1rem;
-    background: white;
-  }
+    @keyframes spin {
+        0% {
+            transform: rotate(0deg);
+        }
+        100% {
+            transform: rotate(360deg);
+        }
+    }
 
-  .actions-row {
-    display: flex;
-    gap: 1rem;
-    justify-content: flex-end;
-    margin-top: 1rem;
-  }
+    .content {
+        display: flex;
+        flex-direction: column;
+        gap: 3rem;
+    }
 
-  .btn.save {
-    background: var(--success-color);
-    color: white;
-  }
+    .current-highlights h2,
+    .product-selection h2 {
+        color: var(--primary-color);
+        font-size: 1.8rem;
+        margin-bottom: 1rem;
+        border-bottom: 2px solid var(--primary-color);
+        padding-bottom: 0.5rem;
+    }
 
-  .btn.save:disabled {
-    background: #ccc;
-    cursor: not-allowed;
-  }
+    .highlights-grid,
+    .products-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: 1.5rem;
+    }
 
-  .btn.cancel {
-    background: #aaa;
-    color: white;
-  }
+    .highlight-card,
+    .product-card {
+        background: white;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease;
+        position: relative;
+    }
 
-  .highlights-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-    gap: 1.5rem;
-  }
+    .product-card {
+        cursor: pointer;
+        border: 2px solid transparent;
+    }
 
-  .highlight-card {
-    background: white;
-    border-radius: 6px;
-    overflow: hidden;
-    box-shadow: var(--box-shadow-small);
-  }
+    .product-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 15px rgba(0, 0, 0, 0.15);
+    }
 
-  .image-container {
-    height: 200px;
-    overflow: hidden;
-  }
+    .product-card.selected {
+        border-color: var(--primary-color);
+        transform: translateY(-2px);
+        box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+    }
 
-  .image-container img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
+    .highlight-card.current {
+        border: 2px solid #28a745;
+    }
 
-  .card-body {
-    padding: 1rem;
-  }
+    .image-container {
+        position: relative;
+        width: 100%;
+        height: 200px;
+        overflow: hidden;
+    }
 
-  .card-body h3 {
-    margin: 0 0 0.5rem;
-  }
+    .product-image {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.3s ease;
+    }
 
-  .description {
-    color: #555;
-    margin-bottom: 0.5rem;
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
+    .product-card:hover .product-image {
+        transform: scale(1.05);
+    }
 
-  .product-linked {
-    font-size: 0.85rem;
-    color: var(--primary-color);
-    font-style: italic;
-  }
+    .selection-indicator {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.9);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 2px solid #ddd;
+        transition: all 0.3s ease;
+    }
 
-  .card-actions {
-    display: flex;
-    justify-content: space-between;
-    padding: 0.75rem;
-    background: #f8f8f8;
-  }
+    .product-card.selected .selection-indicator {
+        background: var(--primary-color);
+        border-color: var(--primary-color);
+    }
 
-  .btn.edit {
-    background: var(--accent-color);
-    color: white;
-  }
+    .check-icon {
+        color: white;
+        font-weight: bold;
+        font-size: 1.2rem;
+    }
 
-  .btn.delete {
-    background: var(--danger-color);
-    color: white;
-  }
+    .remove-btn {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        background: #dc3545;
+        color: white;
+        border: none;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.2rem;
+        font-weight: bold;
+        transition: all 0.3s ease;
+    }
 
-  .no-items {
-    text-align: center;
-    padding: 2rem;
-    color: #666;
-  }
+    .remove-btn:hover {
+        background: #c82333;
+        transform: scale(1.1);
+    }
+
+    .card-content {
+        padding: 1.5rem;
+    }
+
+    .card-content h3 {
+        font-size: 1.2rem;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+        color: var(--primary-color);
+    }
+
+    .price {
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: #28a745;
+        margin-bottom: 0.5rem;
+    }
+
+    .category {
+        font-size: 0.9rem;
+        color: #666;
+        text-transform: capitalize;
+    }
+
+    .description {
+        font-size: 0.9rem;
+        color: #666;
+        line-height: 1.4;
+        margin-top: 0.5rem;
+    }
+
+    .selection-info {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1.5rem;
+        padding: 1rem;
+        background: #f8f9fa;
+        border-radius: 8px;
+    }
+
+    .selection-info p {
+        font-weight: 600;
+        color: var(--primary-color);
+    }
+
+    .save-btn {
+        background: var(--primary-color);
+        color: white;
+        border: none;
+        padding: 0.75rem 1.5rem;
+        border-radius: 8px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .save-btn:hover:not(:disabled) {
+        background: #654321;
+        transform: translateY(-1px);
+    }
+
+    .save-btn:disabled {
+        background: #ccc;
+        cursor: not-allowed;
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 3rem;
+        color: #666;
+    }
+
+    .empty-state p {
+        font-size: 1.1rem;
+    }
+
+    @media (max-width: 768px) {
+        .admin-highlights {
+            padding: 1rem;
+        }
+
+        .header h1 {
+            font-size: 2rem;
+        }
+
+        .highlights-grid,
+        .products-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .selection-info {
+            flex-direction: column;
+            gap: 1rem;
+            text-align: center;
+        }
+    }
 </style>
