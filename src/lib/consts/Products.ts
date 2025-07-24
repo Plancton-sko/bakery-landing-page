@@ -1,5 +1,5 @@
 //src/lib/const/Product.ts
-import { Categories } from "$lib/enums/Categories";
+import { Categories } from "$lib/consts/Categories";
 import type { Product } from "$lib/types/Product";
 
 import whiteBread from '$lib/assets/images/white-flour-bread.webp?enhanced';

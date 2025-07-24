@@ -1,5 +1,5 @@
 // src/lib/types/Discount.ts
-import type { Categories } from "$lib/enums/Categories";
+import type { Categories } from "$lib/consts/Categories";
 export type DiscountType = 'percentage' | 'fixed';
 
 export type DiscountRule = {

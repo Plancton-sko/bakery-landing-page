@@ -1,7 +1,7 @@
 // src/routes/+page.ts
 export const load = async () => {
   try {
-    const res = await fetch('http://localhost:5000');
+    const res = await fetch('http://localhost:3000');
     const data = await res.json();
     return { data };
   } catch (error) {

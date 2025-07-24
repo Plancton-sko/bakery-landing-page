@@ -52,6 +52,7 @@ export async function saveHighlights(highlightData: any[]): Promise<void> {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({ highlights: highlightData }),
+            credentials: 'include'
         });
 
         if (!response.ok) {

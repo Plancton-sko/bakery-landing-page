@@ -159,43 +159,45 @@ textarea {
 }
 
 
+/* Reset Moderno */
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--font-primary, 'Roboto', sans-serif);
+  background-color: var(--background-color, #fffaf3);
+  color: var(--text-color, #333);
+  line-height: 1.6;
+}
+
+/* Variáveis CSS */
 :root {
   /* Cores principais */
-  --primary-color: #6B4226; 
-  --secondary-color: #F5C518; 
-  --third-color: #F4A261; 
-  --background-color: #FDF4E3; 
-  --button-background: #ebb916;  
-  --button-background-hover: #d6a514; 
-  --background-highlight: #d79a3b
-  --light-background: #FFF7E6; 
-  --dark-overlay: rgba(0, 0, 0, 0.3); 
-  --second-button-color: #D97A07
+  --primary-color: #6B4226;
+  --secondary-color: #F5C518;
+  --third-color: #F4A261;
+  --highlight-color: #E76F51;
+  --danger-color: #E63946;
 
-  
-  /* Texto */
-  --text-color: #333; 
-  --light-text: #555; 
+  --background-color: #fffaf3;
+  --light-background: #fff7e6;
+  --gradient-primary: linear-gradient(135deg, #FFECD1, #FFF7E6);
+  --dark-overlay: rgba(0, 0, 0, 0.5);
+
   --white-text: #fff;
-  --danger-color: #E63946; 
-  --highlight-color: #E76F51; 
+  --text-color: #333;
+  --light-text: #555;
 
-  /* Gradientes */
-  --gradient-primary: linear-gradient(135deg, #FFECD1, #FFF7E6); /* Gradiente usado no modal */
-  --gradient-overlay: rgba(0, 0, 0, 0.7); /* Gradiente para sobreposição escura */
-
-  /* Transições */
-  --transition-time: 0.3s; /* Tempo padrão para transições */
-
-  /* Sombras */
-  --box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1); 
-  --box-shadow-small: 0 4px 8px rgba(0, 0, 0, 0.1); 
-  --box-shadow-medium: 0 4px 12px rgba(0, 0, 0, 0.1); 
-  --box-shadow-intense: 0px 8px 24px rgba(0, 0, 0, 0.1); 
-  --text-shadow: 2px 2px 12px rgba(0, 0, 0, 0.5);
-  --overlay-dark: rgba(0, 0, 0, 0.3);
-
-  /* Espaçamentos */
+  /* Espaçamento */
   --spacing-xs: 4px;
   --spacing-sm: 8px;
   --spacing-md: 16px;
@@ -207,33 +209,108 @@ textarea {
   --font-secondary: 'Playfair Display', serif;
   --font-tertiary: 'Poppins', sans-serif;
 
+  /* Sombras */
+  --box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  --box-shadow-small: 0 4px 8px rgba(0, 0, 0, 0.08);
+  --box-shadow-medium: 0 4px 12px rgba(0, 0, 0, 0.1);
+  --box-shadow-intense: 0 8px 24px rgba(0, 0, 0, 0.12);
+
   /* Bordas */
   --border-radius: 12px;
   --border-radius-small: 6px;
   --border-radius-medium: 8px;
   --border-radius-large: 16px;
 
-  /* Outros */
-  --button-padding: 10px 20px; /* Padrão para botões */
-  --button-padding-small: 10px 15px;
-  --input-padding: 12px; /* Padrão para inputs */
+  /* Transições */
+  --transition-time: 0.3s;
 
-  img[data-enhanced] {
-    background-size: cover;
-    background-repeat: no-repeat;
-    background-position: center;
-  }
-  
-  .hero-image::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(
-      to bottom,
-      rgba(0,0,0,0.3) 0%,
-      rgba(0,0,0,0.15) 30%,
-      rgba(0,0,0,0.1) 100%
-    );
-    z-index: 1;
-  }
+  /* Botões */
+  --button-background: #ebb916;
+  --button-background-hover: #d6a514;
+  --button-padding: 10px 20px;
+}
+
+/* Tipografia básica */
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-primary);
+  font-weight: bold;
+  color: var(--primary-color);
+}
+
+p {
+  font-size: 1rem;
+  color: var(--text-color);
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+/* Inputs e Buttons */
+input, textarea, select, button {
+  font-family: inherit;
+  font-size: 1rem;
+  border: none;
+  outline: none;
+  background: none;
+}
+
+button {
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+/* Formulários */
+input[type="text"],
+input[type="email"],
+input[type="number"],
+textarea,
+select {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #eaeaea;
+  border-radius: var(--border-radius-medium);
+  transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+  border-color: var(--third-color);
+  box-shadow: 0 0 6px rgba(244, 162, 97, 0.3);
+}
+
+/* Botões padrão */
+.btn {
+  background-color: var(--button-background);
+  color: var(--white-text);
+  padding: var(--button-padding);
+  border-radius: var(--border-radius-small);
+  transition: background-color 0.3s, transform 0.2s;
+}
+
+.btn:hover {
+  background-color: var(--button-background-hover);
+  transform: scale(1.05);
+}
+
+/* Utilitários */
+.text-center {
+  text-align: center;
+}
+
+.container {
+  max-width: 1200px;
+  margin: auto;
+  padding: 0 var(--spacing-md);
+}
+
+/* Modal e sobreposições */
+.modal-overlay {
+  background-color: var(--dark-overlay);
+}
+
+.gradient-background {
+  background: var(--gradient-primary);
 }

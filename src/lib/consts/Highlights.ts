@@ -1,5 +1,5 @@
 // src/lib/const/Highlights.ts
-import { Categories } from "$lib/enums/Categories";
+import { Categories } from "$lib/consts/Categories";
 import type { Highlight } from "$lib/types/Highlight";
 
 import whiteFlour from '$lib/assets/images/white-flour-bread.webp?enhanced';

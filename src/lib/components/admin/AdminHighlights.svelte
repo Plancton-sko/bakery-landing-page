@@ -5,7 +5,7 @@
     import type { Highlight } from "$lib/types/Highlight";
     import { goto } from "$app/navigation";
     import { page } from "$app/stores";
-    import { config } from '$lib/services/config';
+    import { config } from "$lib/services/config";
 
     import {
         highlights,
@@ -74,7 +74,7 @@
                     return {
                         id: productId,
                         name: product?.name || "",
-                        price: product?.price || 0,
+                        price: Number(product?.price) || 0, // <== Aqui
                         image: product?.image || "",
                         description: product?.description,
                         isActive: false,
@@ -96,9 +96,26 @@
             console.error("Erro ao remover highlight:", err);
         }
     }
-
+// #TODO: Remove this function
     function formatPrice(price: number): string {
-        return (price / 100).toFixed(2);
+        return (price / 1).toFixed(2);
+    }
+
+    function getImageSrc(image: string | any): string {
+        if (typeof image === "string") {
+            return image;
+        }
+        // Handle Picture type - try common properties
+        if (image?.src) {
+            return image.src;
+        }
+        if (image?.sources?.[0]?.srcset) {
+            return image.sources[0].srcset.split(" ")[0]; // Get first source
+        }
+        if (image?.img?.src) {
+            return image.img.src;
+        }
+        return ""; // Fallback
     }
 </script>
 
@@ -142,11 +159,17 @@
                         {#each highlightsData as highlight}
                             <div class="highlight-card current">
                                 <div class="image-container">
-                                    <enhanced:img
-                                        src={highlight.image}
-                                        alt={highlight.name}
-                                        class="product-image"
-                                    />
+                                    {#if highlight.image}
+                                        <img
+                                            src={getImageSrc(highlight.image)}
+                                            alt={highlight.name}
+                                            class="product-image"
+                                        />
+                                    {:else}
+                                        <div class="no-image">
+                                            Imagem indisponível
+                                        </div>
+                                    {/if}
                                 </div>
                                 <div class="card-content">
                                     <h3>{highlight.name}</h3>
@@ -196,20 +219,36 @@
                         <div
                             class="product-card"
                             class:selected={selectedProducts.has(product.id)}
+                            role="button"
+                            tabindex="0"
                             on:click={() => toggleProduct(product.id)}
+                            on:keydown={(e) => {
+                                if (e.key === "Enter" || e.key === " ") {
+                                    e.preventDefault();
+                                    toggleProduct(product.id);
+                                }
+                            }}
                         >
                             <div class="image-container">
-                                <enhanced:img
-                                    src={product.image}
-                                    alt={product.name}
-                                    class="product-image"
-                                />
+                                {#if product.image}
+                                    <img
+                                        src={getImageSrc(product.image)}
+                                        alt={product.name}
+                                        class="product-image"
+                                    />
+                                {:else}
+                                    <div class="no-image">
+                                        Imagem indisponível
+                                    </div>
+                                {/if}
+
                                 <div class="selection-indicator">
                                     {#if selectedProducts.has(product.id)}
                                         <div class="check-icon">✓</div>
                                     {/if}
                                 </div>
                             </div>
+
                             <div class="card-content">
                                 <h3>{product.name}</h3>
                                 <p class="price">

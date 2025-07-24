@@ -1,11 +1,12 @@
 <!--src/lib/components/HotDeals.svelte-->
 <script lang="ts">
-    import { onMount } from 'svelte';
+    import { onMount } from "svelte";
     import { products } from "$lib/consts/Products";
-    import Highlights from "./Highlights.svelte";
     import ProductCard from "./ProductCard.svelte";
-    import { highlights, fetchHighlights } from '$lib/stores/highlightsStore';
-    import type { Highlight } from '$lib/types/Highlight';
+    import { highlights, fetchHighlights } from "$lib/stores/highlightsStore";
+    import type { Highlight } from "$lib/types/Highlight";
+    import { Categories } from '$lib/consts/Categories';
+
 
     let highlightsData: Highlight[] = [];
     let loading = true;
@@ -17,7 +18,7 @@
         try {
             await fetchHighlights();
         } catch (error) {
-            console.error('Erro ao carregar highlights:', error);
+            console.error("Erro ao carregar highlights:", error);
         } finally {
             loading = false;
         }
@@ -27,7 +28,7 @@
 <div class="hot-deals">
     <h2>Hot Deals</h2>
     <p>Confira nossos produtos em destaque com as melhores ofertas</p>
-    
+
     <div class="products">
         {#if loading}
             <div class="loading-highlights">
@@ -35,18 +36,34 @@
                 <p>Carregando destaques...</p>
             </div>
         {:else if highlightsData.length > 0}
-            <Highlights highlights={highlightsData} />
+            <div class="highlight-grid">
+                {#each highlightsData as highlight}
+                    <ProductCard
+                        product={{
+                            id: highlight.id,
+                            name: highlight.name,
+                            price: highlight.price,
+                            description: highlight.description ?? '',
+                            image: highlight.image,
+                            category: highlight.category ??  Categories.OTHERS, 
+                        }}
+                        isHighlighted={true}
+                    />
+                {/each}
+            </div>
         {:else}
             <div class="no-highlights">
                 <p>Nenhum produto em destaque no momento</p>
             </div>
         {/if}
-        
+
         <div class="product-grid">
             {#each products as product, index}
-                <ProductCard 
-                    {product} 
-                    isHighlighted={highlightsData.some(h => h.id === product.id)}
+                <ProductCard
+                    {product}
+                    isHighlighted={highlightsData.some(
+                        (h) => h.id === product.id,
+                    )}
                 />
             {/each}
         </div>
@@ -66,7 +83,7 @@
     }
 
     .hot-deals h2 {
-        font-family: 'Playfair Display', serif;
+        font-family: "Playfair Display", serif;
         font-size: 36px;
         font-weight: bold;
         margin-bottom: 20px;
@@ -114,8 +131,12 @@
     }
 
     @keyframes spin {
-        0% { transform: rotate(0deg); }
-        100% { transform: rotate(360deg); }
+        0% {
+            transform: rotate(0deg);
+        }
+        100% {
+            transform: rotate(360deg);
+        }
     }
 
     .no-highlights {
@@ -131,7 +152,7 @@
         .product-grid {
             grid-template-columns: 1fr;
         }
-        
+
         .loading-highlights,
         .no-highlights {
             width: 100%;
@@ -142,7 +163,7 @@
         .product-grid {
             grid-template-columns: 1fr 1fr;
         }
-        
+
         .loading-highlights,
         .no-highlights {
             width: 80%;
@@ -153,7 +174,7 @@
         .product-grid {
             grid-template-columns: 1fr 1fr 1fr;
         }
-        
+
         .loading-highlights,
         .no-highlights {
             width: 80%;
@@ -168,7 +189,7 @@
         .products {
             flex-direction: row;
         }
-        
+
         .loading-highlights,
         .no-highlights {
             width: 40%;

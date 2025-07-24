@@ -67,87 +67,119 @@
     fetchTags();
   });
 
-  // Função para buscar imagens com tipos corretos
-const fetchImages = async (page: number = 1): Promise<void> => {
-  galleryState.loading = true;
-  galleryState.error = null;
+  const deleteImages = async (): Promise<void> => {
+    const selected = galleryState.images.filter((img) =>
+      galleryState.selectedImages.has(img.id),
+    );
 
-  const searchParams: GallerySearchParams = {
-    page,
-    limit: 20,
-    search: galleryState.searchTerm || undefined,
-    tags:
-      galleryState.selectedTags.length > 0
-        ? galleryState.selectedTags
-        : undefined,
-    sortBy: "createdAt",
-    sortOrder: "desc",
+    if (selected.length === 0) return;
+
+    const confirmed = confirm(`Deseja apagar ${selected.length} imagem(ns)?`);
+    if (!confirmed) return;
+
+    try {
+      for (const img of selected) {
+        const res = await fetch(`${baseUrl}/gallery/${img.id}`, {
+          method: "DELETE",
+          credentials: "include",
+        });
+
+        if (!res.ok) {
+          const msg = await res.text();
+          throw new Error(`Erro ao apagar imagem ${img.title}: ${msg}`);
+        }
+      }
+
+      clearSelection();
+      await fetchImages(galleryState.currentPage);
+      await fetchTags();
+    } catch (err) {
+      console.error("Erro ao apagar imagens:", err);
+      galleryState.error =
+        err instanceof Error ? err.message : "Erro ao apagar imagens";
+    }
   };
 
-  const params = new URLSearchParams();
-  Object.entries(searchParams).forEach(([key, value]) => {
-    if (value !== undefined) {
-      if (Array.isArray(value)) {
-        params.append(key, value.join(","));
-      } else {
-        params.append(key, value.toString());
-      }
-    }
-  });
+  // Função para buscar imagens com tipos corretos
+  const fetchImages = async (page: number = 1): Promise<void> => {
+    galleryState.loading = true;
+    galleryState.error = null;
 
-  try {
-    const res = await fetch(`${baseUrl}/gallery?${params}`, {
-      credentials: "include",
+    const searchParams: GallerySearchParams = {
+      page,
+      limit: 20,
+      search: galleryState.searchTerm || undefined,
+      tags:
+        galleryState.selectedTags.length > 0
+          ? galleryState.selectedTags
+          : undefined,
+      sortBy: "createdAt",
+      sortOrder: "desc",
+    };
+
+    const params = new URLSearchParams();
+    Object.entries(searchParams).forEach(([key, value]) => {
+      if (value !== undefined) {
+        if (Array.isArray(value)) {
+          params.append(key, value.join(","));
+        } else {
+          params.append(key, value.toString());
+        }
+      }
     });
 
-    if (!res.ok) {
-      throw new Error(await res.text());
-    }
-
-    let apiResponse: ApiResponse<PaginatedResponse<GalleryImage>>;
-    
     try {
-      console.log(res);
-      // Corrigindo: primeiro fazer o parse do JSON, depois atribuir corretamente
-      const jsonData = await res.json();
-      console.log('JSON Data:', jsonData);
-      
-      // Se o servidor retorna diretamente os dados sem wrapper ApiResponse
-      if (jsonData.images && jsonData.page) {
-        apiResponse = {
-          success: true,
-          data: jsonData,
-          timestamp: new Date().toISOString()
-        };
-      } else {
-        // Se o servidor retorna no formato ApiResponse
-        apiResponse = jsonData;
+      const res = await fetch(`${baseUrl}/gallery?${params}`, {
+        credentials: "include",
+      });
+
+      if (!res.ok) {
+        throw new Error(await res.text());
       }
-      
-      console.log('API Response:', apiResponse);
-    } catch (parseError) {
-      console.error('Parse Error:', parseError);
-      throw new Error("Erro ao processar resposta do servidor");
-    }
 
-    // Verificar se a resposta foi bem-sucedida
-    if (!apiResponse || !apiResponse.success || !apiResponse.data) {
-      throw new Error(apiResponse?.error || "Erro na busca");
-    }
+      let apiResponse: ApiResponse<PaginatedResponse<GalleryImage>>;
 
-    // Atribuir os dados ao estado
-    galleryState.images = apiResponse.data.items;
-    galleryState.totalPages = apiResponse.data.pagination.totalPages;
-    galleryState.currentPage = apiResponse.data.pagination.page;
-    
-  } catch (err) {
-    console.error("Erro ao buscar imagens:", err);
-    galleryState.error =
-      err instanceof Error ? err.message : "Erro desconhecido";
-  } finally {
-    galleryState.loading = false;
-  }
-};
+      try {
+        console.log(res);
+        // Corrigindo: primeiro fazer o parse do JSON, depois atribuir corretamente
+        const jsonData = await res.json();
+        console.log("JSON Data:", jsonData);
+
+        // Se o servidor retorna diretamente os dados sem wrapper ApiResponse
+        if (jsonData.images && jsonData.page) {
+          apiResponse = {
+            success: true,
+            data: jsonData,
+            timestamp: new Date().toISOString(),
+          };
+        } else {
+          // Se o servidor retorna no formato ApiResponse
+          apiResponse = jsonData;
+        }
+
+        console.log("API Response:", apiResponse);
+      } catch (parseError) {
+        console.error("Parse Error:", parseError);
+        throw new Error("Erro ao processar resposta do servidor");
+      }
+
+      // Verificar se a resposta foi bem-sucedida
+      if (!apiResponse || !apiResponse.success || !apiResponse.data) {
+        throw new Error(apiResponse?.error || "Erro na busca");
+      }
+
+      // Atribuir os dados ao estado
+      galleryState.images = apiResponse.data.items;
+      galleryState.totalPages = apiResponse.data.pagination.totalPages;
+      galleryState.currentPage = apiResponse.data.pagination.page;
+    } catch (err) {
+      console.error("Erro ao buscar imagens:", err);
+      galleryState.error =
+        err instanceof Error ? err.message : "Erro desconhecido";
+    } finally {
+      galleryState.loading = false;
+    }
+  };
 
   // Função para buscar tags
   const fetchTags = async (): Promise<void> => {
@@ -506,6 +538,9 @@ const fetchImages = async (page: number = 1): Promise<void> => {
         Usar Selecionadas
       </button>
       <button class="btn" on:click={clearSelection}> Limpar Seleção </button>
+      <button class="btn danger" on:click={deleteImages}>
+        Apagar Imagens
+      </button>
     </div>
   {/if}
 </div>

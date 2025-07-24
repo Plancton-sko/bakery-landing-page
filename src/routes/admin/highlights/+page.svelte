@@ -1,6 +1,6 @@
 <!-- src/routes/admin/highlights/+page.svelte -->
 <script lang="ts">
-  import AdminHighlights from "$lib/components/AdminHighlights.svelte";
+  import AdminHighlights from "$lib/components/admin/AdminHighlights.svelte";
 </script>
 
 <div class="page-header">

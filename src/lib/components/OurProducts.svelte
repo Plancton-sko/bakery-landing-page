@@ -2,7 +2,7 @@
 <script lang="ts">
   import { onMount } from "svelte";
   import { writable, derived } from "svelte/store";
-  import { Categories } from "$lib/enums/Categories";
+  import { Categories } from "$lib/consts/Categories";
   import type { Product } from "$lib/types/Product";
   import { products as productStore } from "$lib/stores/products";
   import CategoryNav from "./CategoryNav.svelte";
@@ -75,7 +75,6 @@
   #our-products {
     text-align: center;
     padding: 50px 20px;
-    background-color: var(--background-color);
   }
 
   #our-products h2 {

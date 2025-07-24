@@ -40,6 +40,9 @@
         <li class:active={$page.url.pathname === "/admin/discounts"}>
           <a href="/admin/discounts">Cupons</a>
         </li>
+        <li class:active={$page.url.pathname === "/admin/gallery"}>
+          <a href="/admin/gallery">Galeria</a>
+        </li>
         <li class:active={$page.url.pathname === "/admin/settings"}>
           <a href="/admin/settings">Configurações</a>
         </li>

@@ -1,6 +1,6 @@
 <!-- src/routes/admin/discounts/+page.svelte -->
 <script lang="ts">
-  import AdminDiscounts from "$lib/components/AdminDiscounts.svelte";
+  import AdminDiscounts from "$lib/components/admin/AdminDiscounts.svelte";
 </script>
 
 <div class="page-header">

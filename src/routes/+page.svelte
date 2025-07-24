@@ -2,7 +2,7 @@
 <script lang="ts">
     import { browser } from "$app/environment";
     import AboutUs from "$lib/components/AboutUs.svelte";
-    import AdminProducts from "$lib/components/AdminProducts.svelte";
+    import AdminProducts from "$lib/components/admin/AdminProducts.svelte";
     import Contact from "$lib/components/Contact.svelte";
     import HeroSlider from "$lib/components/HeroSlider.svelte";
     import HotDeals from "$lib/components/HotDeals.svelte";

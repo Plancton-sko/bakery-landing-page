@@ -1,5 +1,5 @@
 // src/lib/types/Product.ts
-import type { Categories } from "$lib/enums/Categories";
+import type { Categories } from "$lib/consts/Categories";
 import type { Writable } from "svelte/store";
 import type { Picture } from "vite-imagetools";
 

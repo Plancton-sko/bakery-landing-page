@@ -1,5 +1,5 @@
 // src/lib/consts/Discounts.ts
-import { Categories } from "$lib/enums/Categories";
+import { Categories } from "$lib/consts/Categories";
 import type { DiscountRule } from "$lib/types/Discount";
 
 export const activeDiscounts: DiscountRule[] = [
