@@ -41,7 +41,7 @@ export let products: Product[] = [
       id: '550e8400-e29b-41d4-a716-446655440003',
       name: 'Assorted Breads and Rolls',
       description: 'A variety of fresh breads and rolls, ideal for gatherings and celebrations.',
-      price: 8.00,
+      price: 8.90,
       category: Categories.BREAD,
       image: breadsRolls
     },
