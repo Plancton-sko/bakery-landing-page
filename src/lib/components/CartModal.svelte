@@ -120,6 +120,10 @@ Número do pedido: ${result.orderNumber || "Processando"}`;
       );
     } catch (err) {
       console.error("Erro no checkout:", err);
+      error =
+        err instanceof Error
+          ? err.message
+          : "Erro ao processar o pedido. Tente novamente.";
     } finally {
       isSubmitting = false;
     }
