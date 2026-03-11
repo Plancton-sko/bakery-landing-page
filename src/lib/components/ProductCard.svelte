@@ -1,7 +1,7 @@
 <!-- src/lib/components/ProductCard.svelte -->
 <script lang="ts">
-  import { onMount } from "svelte";
-  import type { Product, ProductImage } from "$lib/types/Product";
+  import { onMount, onDestroy } from "svelte";
+  import type { Product } from "$lib/types/Product";
   import Modal from "$lib/components/Modal.svelte";
   import BottomSheet from "$lib/components/BottomSheet.svelte";
   import { addToCart, isCartOpen } from "$lib/stores/cart";
@@ -15,18 +15,47 @@
   let isModalOpen = false;
   let quantity = 1;
   let isMobile = false;
-  let discountInfo = calculateDiscounts(product, activeDiscounts);
+  const quantityId = `quantity-${Math.random().toString(36).slice(2, 10)}`;
+
+  $: discountInfo = calculateDiscounts(product, activeDiscounts);
+
+  const getSrcSet = (format: string) =>
+    product?.images
+      ?.filter((img) => img.format === format)
+      .map((img) => `${img.url}?auto=compress&cs=tinysrgb&w=${img.width}&dpr=1 ${img.width}w`)
+      .join(", ") ?? "";
+
+  const getDefaultImage = () => {
+    const preferred = product?.images?.find((img) => img.format === "avif" && img.size === "medium");
+    return preferred
+      ? `${preferred.url}?auto=compress&cs=tinysrgb&w=800&dpr=1`
+      : typeof product?.image === "string"
+      ? product.image
+      : "/placeholder.jpg";
+  };
+
+  const updateMobile = () => {
+    isMobile = window.innerWidth <= 768;
+  };
 
   onMount(() => {
-    isMobile = window.innerWidth <= 768;
-    window.addEventListener("resize", () => {
-      isMobile = window.innerWidth <= 768;
-    });
+    updateMobile();
+    window.addEventListener("resize", updateMobile);
+  });
+
+  onDestroy(() => {
+    window.removeEventListener("resize", updateMobile);
   });
 
   const openModal = () => {
     isModalOpen = true;
-    discountInfo = calculateDiscounts(product, activeDiscounts);
+  };
+
+  const handleKeyDown = (event: KeyboardEvent) => {
+    if (event.key === "Enter" || event.key === " ") {
+      event.preventDefault();
+      openModal();
+    }
   };
 
   const closeModal = () => {
@@ -39,28 +68,18 @@
     closeModal();
   };
 
-  const getSrcSet = (format: string) => {
-    return product.images
-      ?.filter(img => img.format === format)
-      .map(img => `${img.url}?auto=compress&cs=tinysrgb&w=${img.width}&dpr=1 ${img.width}w`)
-      .join(', ') ?? '';
-  };
-
-  const getDefaultImage = () => {
-    const preferred = product.images?.find(img => img.format === 'avif' && img.size === 'medium');
-    return preferred ? `${preferred.url}?auto=compress&cs=tinysrgb&w=800&dpr=1` : (typeof product.image === 'string' ? product.image : "/placeholder.jpg");
-  };
-
   $: srcSetAvif = getSrcSet('avif');
   $: srcSetWebp = getSrcSet('webp');
   $: srcSetJpeg = getSrcSet('jpeg');
   $: fallbackImage = getDefaultImage();
 </script>
 
-<button
+<div
   class="product-card {isHighlighted ? 'highlight' : ''}"
   on:click={openModal}
-  type="button"
+  on:keydown={handleKeyDown}
+  role="button"
+  tabindex="0"
 >
   {#if discountInfo}
     <div class="discount-badge">
@@ -84,30 +103,30 @@
     {/if}
     <img
       src={fallbackImage}
-      alt={product.name}
+      alt={product?.name ?? 'Produto'}
       loading="lazy"
       decoding="async"
       sizes="(max-width: 640px) 100vw, (max-width: 1024px) 80vw, 50vw"
     />
   </picture>
 
-  <h3>{product.name}</h3>
+  <h3>{product?.name ?? 'Produto'}</h3>
 
   <div class="price-container">
     {#if discountInfo}
       <p class="original-price">{formatPrice(discountInfo.originalPrice)}</p>
       <p class="discounted-price">{formatPrice(discountInfo.finalPrice)}</p>
     {:else}
-      <p>{formatPrice(product.price)}</p>
+      <p>{formatPrice(product?.price ?? 0)}</p>
     {/if}
   </div>
-</button>
+</div>
 
 {#if isMobile}
   <BottomSheet isOpen={isModalOpen} onClose={closeModal}>
     <div class="bottomSheet-content">
-      <h2>{product.name}</h2>
-      <p>{product.description}</p>
+      <h2>{product?.name ?? 'Produto'}</h2>
+      <p>{product?.description ?? ''}</p>
 
       <picture>
         {#if srcSetAvif}
@@ -121,7 +140,7 @@
         {/if}
         <img
           src={fallbackImage}
-          alt={product.name}
+          alt={product?.name ?? 'Produto'}
           loading="lazy"
           decoding="async"
           sizes="100vw"
@@ -134,20 +153,20 @@
           <p class="original-price">{formatPrice(discountInfo.originalPrice)}</p>
           <p class="discounted-price">{formatPrice(discountInfo.finalPrice)}</p>
         {:else}
-          <p>{formatPrice(product.price)}</p>
+          <p>{formatPrice(product?.price ?? 0)}</p>
         {/if}
       </div>
 
-      <label for="quantity">Quantidade:</label>
+      <label for={quantityId}>Quantidade:</label>
       <input
         type="number"
-        id="quantity"
+        id={quantityId}
         bind:value={quantity}
         min="1"
         class="quantity-input"
       />
 
-      <button class="add-to-cart" on:click={handleAddToCart}>
+      <button class="add-to-cart" on:click|stopPropagation={handleAddToCart}>
         Adicionar ao Carrinho
       </button>
     </div>
@@ -155,8 +174,8 @@
 {:else}
   <Modal isOpen={isModalOpen} onClose={closeModal}>
     <div class="modal-content">
-      <h2>{product.name}</h2>
-      <p>{product.description}</p>
+      <h2>{product?.name ?? 'Produto'}</h2>
+      <p>{product?.description ?? ''}</p>
 
       <picture>
         {#if srcSetAvif}
@@ -170,7 +189,7 @@
         {/if}
         <img
           src={fallbackImage}
-          alt={product.name}
+          alt={product?.name ?? 'Produto'}
           loading="lazy"
           decoding="async"
           sizes="(max-width: 640px) 100vw, (max-width: 1024px) 80vw, 50vw"
@@ -183,22 +202,22 @@
           <p class="original-price">{formatPrice(discountInfo.originalPrice)}</p>
           <p class="discounted-price">{formatPrice(discountInfo.finalPrice)}</p>
         {:else}
-          <p>{formatPrice(product.price)}</p>
+          <p>{formatPrice(product?.price ?? 0)}</p>
         {/if}
       </div>
 
       <div class="quantity-controls">
-        <label for="quantity">Quantidade:</label>
+        <label for={quantityId}>Quantidade:</label>
         <input
           type="number"
-          id="quantity"
+          id={quantityId}
           bind:value={quantity}
           min="1"
           class="quantity-input"
         />
       </div>
 
-      <button class="add-to-cart" on:click={handleAddToCart}>
+      <button class="add-to-cart" on:click|stopPropagation={handleAddToCart}>
         Adicionar ao Carrinho
       </button>
     </div>

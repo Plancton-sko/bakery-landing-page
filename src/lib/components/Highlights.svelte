@@ -10,7 +10,7 @@
     let intervalId: NodeJS.Timeout | null = null;
     let activeHighlights: Highlight[] = [];
 
-    // Reatividade para quando highlights mudam
+     // Reatividade para quando highlights mudam
     $: if (highlights.length > 0) {
         activeHighlights = highlights.slice(); // Copia os highlights
         resetHighlights();
